@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Alert } from 'react-native';
-import { styles } from './Style';
+import useStyles from './Style';
 import CustomInput from '../../../components/CustomInput/CustomInput';
 import CustomButton from '../../../components/CustomButton/CustomButton';
-import { login, signout } from '../../../Services/authServices';
+import { login, signout } from '../../../services/authServices';
 import CustomHeader from '../../../components/CustomHeader/CustomHeader';
 import CustomPasswordInput from '../../../components/CustomPassword/CustomPassword';
-import { useMessage } from '../../../components/MessageProvider/MessageProvider';
+
 import EncryptedStorage from 'react-native-encrypted-storage';
+import { showError, showSuccess, showWarning } from '../../../utils/helperFunction';
+
 
 interface LoginScreenProps {
     navigation: {
@@ -16,10 +18,13 @@ interface LoginScreenProps {
 }
 
 const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
+
+    const { styles, colors } = useStyles();
+
     const [pin, setPin] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [loading, setLoading] = useState<boolean>(false);
-    const { showSuccess, showError } = useMessage();
+
 
     const handleLogin = async () => {
         setLoading(true);
@@ -27,20 +32,20 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
             const push_token = await EncryptedStorage.getItem('push_token');
             console.log(push_token);
 
-            const response = await login(pin, password, push_token);
-            showSuccess('Login successful!');
+            const response = await login(pin, password, push_token as string);
+            showSuccess('Login successful!', '');
             await EncryptedStorage.setItem('token', response.token);
             navigation.navigate('Testing');
             setPassword('');
             setPin('');
         } catch (error: any) {
             if (!pin) {
-                showError(error.errors?.pin || 'Pin is required');
+                showError(error.errors?.pin || 'Pin is required', '');
             }
             if (!password) {
-                showError(error.errors?.password || 'Password is required');
+                showError(error.errors?.password || 'Password is required', '');
             } else {
-                showError(error.message || 'Login failed');
+                showError(error.message || 'Login failed', '');
             }
         } finally {
             setLoading(false);
@@ -68,6 +73,10 @@ const Login: React.FC<LoginScreenProps> = ({ navigation }) => {
             <View style={styles.container}>
                 {/* Pin number input */}
                 <CustomInput
+
+
+
+
                     keyboardType="numeric"
                     inputStyle={styles.pinInput}
                     maxLength={6}
