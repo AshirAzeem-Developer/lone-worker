@@ -13,23 +13,26 @@ const useStyles = () => {
 
   const styles = StyleSheet.create({
     container: {
-      display: 'flex',
+      flex: 1,
+      paddingHorizontal: 20,
       justifyContent: 'center',
-      alignSelf: 'center',
+      alignItems: 'center',
+
     },
     pinInput: {
       marginTop: sizes.HEIGHT * 0.34,
       width: sizes.WIDTH * 0.7,
-      //    alignSelf:"center",
+ 
     },
     passInput: {
       width: sizes.WIDTH * 0.9,
-      //   alignSelf:"center",
+
     },
     loginBtn: {
-      // alignSelf:"center",
-      width: sizes.WIDTH * 0.5,
+      width: sizes.WIDTH * 0.6,
       alignSelf: 'center',
+      marginTop: sizes.HEIGHT * 0.04,
+
     },
     eyeIcon: {},
     // passContainer: {
@@ -42,6 +45,7 @@ const useStyles = () => {
     forgotPassword: {
       color: 'green',
       alignSelf: 'center',
+      marginTop: sizes.HEIGHT * 0.01,
     },
   });
 

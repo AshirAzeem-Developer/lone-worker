@@ -1,5 +1,14 @@
-import {Image, StyleSheet, TextInput, View} from 'react-native';
-import React, {useMemo} from 'react';
+import React, {useState, useMemo} from 'react';
+import {
+  Image,
+  StyleSheet,
+  TextInput,
+  View,
+  Text,
+  TouchableOpacity,
+  ViewStyle,
+  ImageStyle,
+} from 'react-native';
 import {useSizes} from '../../constants/size';
 import {getGlobalStyles} from '../../constants/globalStyles';
 import {useColors} from '../../constants/color';
@@ -9,64 +18,103 @@ type Props = {
   placeholderTextColor?: string;
   value: string;
   onChangeText: (text: string) => void;
-  error?: boolean;
-  icon?: any;
+  errorHandler?: {
+    errorText: string;
+    validator: (text: string) => boolean;
+  }[];
+  leftIcon?: any;
+  rightIcon?: any;
+  onLeftIconPress?: () => void;
+  onRightIconPress?: () => void;
   secureTextEntry?: boolean;
   style?: any;
   keyboardType?: any;
   autoFocus?: boolean;
-  ref?: any;
-  iconColor?: string;
   multiline?: boolean;
   editable?: boolean;
+  showBottomBorder?: boolean;
+  label?:string
+  iconStyles?:ImageStyle
 };
 
 const InputComponent = ({
+  iconStyles,
+  label,
   placeholder,
   placeholderTextColor,
   value,
   onChangeText,
-  error,
-  icon,
+  errorHandler,
+  leftIcon,
+  rightIcon,
+  onLeftIconPress,
+  onRightIconPress,
   secureTextEntry,
   style,
   keyboardType,
   autoFocus,
-  ref,
-  iconColor,
   multiline,
   editable,
+  showBottomBorder = true,
   ...props
 }: Props) => {
   const {colors, styles} = useStyles();
+  const [error, setError] = useState('');
+  const [showError, setShowError] = useState(false);
+
+  const handleTextChange = (text: string) => {
+    setShowError(true);
+    if (errorHandler) {
+      const errors = errorHandler
+        .filter(item => !item.validator(text))
+        .map(item => item.errorText);
+      setError(errors.length > 0 ? errors[errors.length - 1] : '');
+    }
+    onChangeText(text);
+  };
+
   return (
-    <View
-      style={[
-        styles.container,
-        {
-          borderWidth: error ? 1 : 0.5,
-          borderColor: error ? colors.RED : colors.GRAY,
-        },
-        style,
-      ]}>
-      {icon && (
-        <Image source={icon} style={[styles.image, {tintColor: iconColor}]} />
-      )}
-      <TextInput
-        {...props}
-        editable={editable}
-        multiline={multiline}
-        autoFocus={autoFocus}
-        ref={ref}
-        value={value}
-        secureTextEntry={secureTextEntry}
-        style={styles.input}
-        placeholder={placeholder}
-        placeholderTextColor={
-          placeholderTextColor ? placeholderTextColor : colors.GRAY
-        }
-        keyboardType={keyboardType}
-      />
+    <View style={styles.wrapper}>
+      <Text style={styles.label}>{label}</Text>
+      <View
+        style={[
+          styles.container,
+          showBottomBorder && {
+            borderBottomWidth: 2,
+            borderBottomColor: value ? colors.BLACK : colors.GRAY,
+          },
+          style,
+        ]}>
+        {/* Left Icon */}
+        {leftIcon && (
+          <TouchableOpacity activeOpacity={0.7} onPress={onLeftIconPress}>
+            <Image source={leftIcon} style={styles.icon} />
+          </TouchableOpacity>
+        )}
+
+        {/* Text Input */}
+        <TextInput
+          {...props}
+          editable={editable}
+          multiline={multiline}
+          autoFocus={autoFocus}
+          onChangeText={handleTextChange}
+          value={value}
+          secureTextEntry={secureTextEntry}
+          style={[styles.input, {color: colors.TEXT}]}
+          placeholder={placeholder}
+          placeholderTextColor={placeholderTextColor || colors.GRAY}
+          keyboardType={keyboardType}
+        />
+
+        {/* Right Icon */}
+        {rightIcon && (
+          <TouchableOpacity activeOpacity={0.7} onPress={onRightIconPress}>
+            <Image source={rightIcon} style={iconStyles} />
+          </TouchableOpacity>
+        )}
+      </View>
+      {showError && error && <Text style={styles.errorText}>{error}</Text>}
     </View>
   );
 };
@@ -81,31 +129,48 @@ const useStyles = () => {
   const styles = useMemo(
     () =>
       StyleSheet.create({
+        wrapper: {
+          width: '100%',
+          marginBottom: 10, // Space for error text
+        },
         container: {
           width: '100%',
-          height: 40,
-          borderRadius: sizes.BORDER_RADIUS,
+          height: sizes.HEIGHT * 0.06,
+          borderRadius: sizes.BORDER_RADIUS * 1.2,
           flexDirection: 'row',
           paddingHorizontal: sizes.PADDING,
           alignItems: 'center',
+          borderWidth: 1.5, // Restored full border
+          borderColor: colors.GRAY, // Border color
+          backgroundColor: colors.WHITE, // Background color
         },
         input: {
-          width: sizes.WIDTH * 0.8,
+          flex: 1,
+          paddingVertical: sizes.HEIGHT * 0.005,
+          paddingHorizontal: sizes.PADDING / 2,
           ...globalStyles.TEXT_STYLE,
         },
-        image: {
-          width: sizes.ICON * 0.5,
-          height: sizes.ICON * 0.5,
-          marginRight: sizes.PADDING,
+        icon: {
+          width: sizes.ICON * 0.6,
+          height: sizes.ICON * 0.6,
+          marginRight: sizes.PADDING / 2,
+          resizeMode: 'contain',
         },
+        errorText: {
+          color: colors.RED,
+          fontSize: sizes.WIDTH * 0.03,
+          marginTop: sizes.HEIGHT * 0.01,
+        },
+        label :{
+          ...globalStyles.TEXT_STYLE,
+          fontSize: sizes.WIDTH * 0.03,
+          color: colors.TEXT,
+          marginBottom: sizes.HEIGHT * 0.01,
+          fontWeight: 'bold',
+        }
       }),
-    [],
+    [colors, sizes],
   );
 
-  return {
-    colors,
-    sizes,
-    globalStyles,
-    styles,
-  };
+  return {colors, sizes, globalStyles, styles};
 };

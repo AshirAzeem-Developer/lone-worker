@@ -23,7 +23,7 @@ export default function CustomHeader({ title, showBackButton = false, showMenu =
                 )}
 
                 {/* Centered Logo */}
-                <Image source={images.REACT_LOGO} style={styles.logo} />
+                <Image source={images.LOGO} style={styles.logo} />
 
                 {/* Optional Right Icon (E.g., Menu) */}
                 {

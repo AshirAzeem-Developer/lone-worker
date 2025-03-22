@@ -12,6 +12,7 @@ import {BaseToast, SuccessToast} from 'react-native-toast-message';
 const {width, height} = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import {useColors} from '../../constants/color';
+import icons from '../../assets/icons';
 
 function SuccessToastMessage(props) {
   const isDarkMode = useColorScheme() === 'dark';
@@ -26,7 +27,15 @@ function SuccessToastMessage(props) {
       renderLeadingIcon={() => {
         return (
           <View style={styles.successMainIconConatiner}>
-            <Icon name="check" color={'#ffffff'} size={12} />
+            <Image
+              source={icons.CHECK}
+              tintColor={'#fff'}
+              style={{
+                width: width * 0.05,
+                height: width * 0.05,
+                resizeMode: 'contain',
+              }}
+            />
           </View>
         );
       }}
@@ -40,11 +49,14 @@ function SuccessToastMessage(props) {
             onPress={() => {
               props?.toastProps?.hide();
             }}>
-            <Icon
-              name="times"
-              color={isDarkMode ? '#ffffff' : '#000000'}
-              size={22}
-              solid={false}
+            <Image
+              source={icons.CROSS}
+              tintColor={'#000'}
+              style={{
+                width: width * 0.05,
+                height: width * 0.05,
+                resizeMode: 'contain',
+              }}
             />
           </TouchableOpacity>
         );

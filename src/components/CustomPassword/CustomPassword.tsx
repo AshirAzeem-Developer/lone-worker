@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { TextInput, View, TouchableOpacity, StyleSheet } from 'react-native';
 import { styles } from './Style';
+import Icon from 'react-native-vector-icons/MaterialIcons';
+
 
 export default function CustomPasswordInput({
     value,
@@ -25,11 +27,11 @@ export default function CustomPasswordInput({
             
             {/* Eye Icon Inside the Box */}
             <TouchableOpacity onPress={() => setIsSecure(!isSecure)} style={styles.iconContainer}>
-                {/* <MaterialIcons 
+                <Icon 
                     name={isSecure ? "visibility-off" : "visibility"} 
                     size={24} 
                     color={iconColor} 
-                /> */}
+                />
             </TouchableOpacity>
         </View>
     );

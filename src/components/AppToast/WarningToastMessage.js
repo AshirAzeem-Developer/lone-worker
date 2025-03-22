@@ -11,6 +11,7 @@ import Toast, {BaseToast, ErrorToast} from 'react-native-toast-message';
 const {width, height} = Dimensions.get('window');
 import Icon from 'react-native-vector-icons/FontAwesome5';
 import color from '../../constants/color';
+import icons from '../../assets/icons';
 
 function WarningToastMessage(props) {
   return (
@@ -20,7 +21,15 @@ function WarningToastMessage(props) {
       renderLeadingIcon={() => {
         return (
           <View style={styles.errorMainIconContainer}>
-            <Icon name="exclamation-triangle" color={'#fff'} size={22} />
+            <Image
+              source={icons.EXCLAMATION}
+              tintColor={'#fff'}
+              style={{
+                width: width * 0.05,
+                height: width * 0.05,
+                resizeMode: 'contain',
+              }}
+            />
           </View>
         );
       }}
@@ -31,7 +40,15 @@ function WarningToastMessage(props) {
             onPress={() => {
               props?.toastProps?.hide();
             }}>
-            <Icon name="times" color={'#000'} size={22} solid={false} />
+            <Image
+              source={icons.CROSS}
+              tintColor={'#000'}
+              style={{
+                width: width * 0.05,
+                height: width * 0.05,
+                resizeMode: 'contain',
+              }}
+            />
           </TouchableOpacity>
         );
       }}

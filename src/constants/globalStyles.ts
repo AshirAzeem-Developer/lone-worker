@@ -10,12 +10,13 @@ export const getGlobalStyles = (colors: Colors, sizes: Sizes) => {
         TEXT_STYLE: {
           fontSize: sizes.FONTSIZE,
           color: colors.TEXT,
-          fontFamily: 'DMSans-Regular',
+          fontFamily: 'SpaceMono-Regular',
         },
         TEXT_STYLE_BOLD: {
+          fontWeight: 'bold',
           fontSize: sizes.FONTSIZE,
           color: colors.TEXT,
-          fontFamily: 'DMSans-Bold',
+          fontFamily: 'SpaceMono-Regular',
         },
         SHADOW_STYLE: {
           shadowColor: colors.TEXT,

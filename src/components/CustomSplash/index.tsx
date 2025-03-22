@@ -9,7 +9,7 @@ import {Animated, Image, Text, View} from 'react-native';
 import icons from '../../assets/icons';
 import useStyles from './style';
 import images from '../../assets/images';
-import { screen } from '../../utils/constants';
+import {screen} from '../../utils/constants';
 // import {useLocalizationsRecourses} from '../../utils/apiHelpers';
 // import {useLocaleStore} from '../../store/reducer/locale';
 
@@ -21,7 +21,7 @@ export default function CustomSplash({
   onEnd: () => void;
 }) {
   const {styles, colors, sizes} = useStyles();
-//   const store = useLocaleStore();
+  //   const store = useLocaleStore();
 
   // console.log('Store ====> ', store);
 
@@ -43,7 +43,7 @@ export default function CustomSplash({
     }
   }, [show]);
 
-//   useLocalizationsRecourses();
+  //   useLocalizationsRecourses();
 
   return show ? (
     <Animated.View style={[styles.container, {opacity: fadeAnim}]}>
@@ -55,7 +55,7 @@ export default function CustomSplash({
         style={{width: 225, height: 225, top: 20}}
       /> */}
       <Image
-        source={images.ICON_PNG}
+        source={images.SPLASH_LOGO}
         resizeMode="contain"
         style={{width: 225, height: 225, top: screen.height * 0.02}}
       />
