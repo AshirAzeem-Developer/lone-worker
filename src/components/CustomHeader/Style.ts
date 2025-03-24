@@ -34,10 +34,10 @@ const useStyles = () => {
     },
     logo: {
       height: sizes.WIDTH * 0.1,
-      width: sizes.WIDTH * 0.1,
+      width: sizes.WIDTH * 0.5,
       alignSelf: 'center',
-      flex: 1,
-      marginTop: sizes.HEIGHT * 0.03,
+
+      // marginTop: sizes.HEIGHT * 0.01,
     },
     icon: {
       width: sizes.WIDTH * 0.05,

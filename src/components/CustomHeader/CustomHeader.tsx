@@ -83,11 +83,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
         {title ? (
           <Text style={[styles.title, {color: textColor}]}>{title}</Text>
         ) : (
-          <Image
-            source={images.LOGO}
-            style={styles.logo}
-            resizeMode="contain"
-          />
+          <Image source={images.LOGO} style={styles.logo} tintColor={'#fff'} />
         )}
 
         {/* Right Icon */}

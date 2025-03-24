@@ -57,7 +57,7 @@ export default function CustomSplash({
       <Image
         source={images.SPLASH_LOGO}
         resizeMode="contain"
-        style={{width: 225, height: 225, top: screen.height * 0.02}}
+        style={{width: 225, height: 225}}
       />
 
       <View
