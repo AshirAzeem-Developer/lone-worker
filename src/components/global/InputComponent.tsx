@@ -33,8 +33,11 @@ type Props = {
   multiline?: boolean;
   editable?: boolean;
   showBottomBorder?: boolean;
-  label?:string
-  iconStyles?:ImageStyle
+  label?: string;
+  iconStyles?: ImageStyle;
+  maxLength?: number;
+  leftIconStyle?: ImageStyle;
+  rightIconStyle?: ImageStyle;
 };
 
 const InputComponent = ({
@@ -56,6 +59,9 @@ const InputComponent = ({
   multiline,
   editable,
   showBottomBorder = true,
+  maxLength,
+  leftIconStyle,
+  rightIconStyle,
   ...props
 }: Props) => {
   const {colors, styles} = useStyles();
@@ -88,7 +94,7 @@ const InputComponent = ({
         {/* Left Icon */}
         {leftIcon && (
           <TouchableOpacity activeOpacity={0.7} onPress={onLeftIconPress}>
-            <Image source={leftIcon} style={styles.icon} />
+            <Image source={leftIcon} style={leftIconStyle || iconStyles} />
           </TouchableOpacity>
         )}
 
@@ -105,12 +111,13 @@ const InputComponent = ({
           placeholder={placeholder}
           placeholderTextColor={placeholderTextColor || colors.GRAY}
           keyboardType={keyboardType}
+          maxLength={maxLength}
         />
 
         {/* Right Icon */}
         {rightIcon && (
           <TouchableOpacity activeOpacity={0.7} onPress={onRightIconPress}>
-            <Image source={rightIcon} style={iconStyles} />
+            <Image source={rightIcon} style={rightIconStyle || iconStyles} />
           </TouchableOpacity>
         )}
       </View>
@@ -149,6 +156,7 @@ const useStyles = () => {
           paddingVertical: sizes.HEIGHT * 0.005,
           paddingHorizontal: sizes.PADDING / 2,
           ...globalStyles.TEXT_STYLE,
+          fontSize: sizes.WIDTH * 0.035,
         },
         icon: {
           width: sizes.ICON * 0.6,
@@ -161,13 +169,13 @@ const useStyles = () => {
           fontSize: sizes.WIDTH * 0.03,
           marginTop: sizes.HEIGHT * 0.01,
         },
-        label :{
+        label: {
           ...globalStyles.TEXT_STYLE,
           fontSize: sizes.WIDTH * 0.03,
           color: colors.TEXT,
           marginBottom: sizes.HEIGHT * 0.01,
           fontWeight: 'bold',
-        }
+        },
       }),
     [colors, sizes],
   );

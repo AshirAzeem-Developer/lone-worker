@@ -1,10 +1,7 @@
-
-
-
-import { StyleSheet } from 'react-native';
-import { useColors } from '../../../constants/color';
-import { useSizes } from '../../../constants/size';
-import { getGlobalStyles } from '../../../constants/globalStyles';
+import {StyleSheet} from 'react-native';
+import {useColors} from '../../../constants/color';
+import {useSizes} from '../../../constants/size';
+import {getGlobalStyles} from '../../../constants/globalStyles';
 
 const useStyles = () => {
   const colors = useColors();
@@ -13,39 +10,42 @@ const useStyles = () => {
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
-      paddingHorizontal: 20,
+      flexDirection: 'column',
+      paddingHorizontal: sizes.WIDTH * 0.05,
       justifyContent: 'center',
       alignItems: 'center',
-
+      height: sizes.HEIGHT * 0.35,
+      paddingBottom: sizes.HEIGHT * 0.1,
+      marginBottom: sizes.HEIGHT * 0.1,
+    },
+    loginText: {
+      ...globalStyles.TEXT_STYLE_BOLD,
+      color: colors.BLACK,
+      fontSize: sizes.WIDTH * 0.08,
+      alignSelf: 'center',
     },
     pinInput: {
       marginTop: sizes.HEIGHT * 0.34,
       width: sizes.WIDTH * 0.7,
- 
     },
     passInput: {
       width: sizes.WIDTH * 0.9,
-
     },
     loginBtn: {
-      width: sizes.WIDTH * 0.6,
+      width: sizes.WIDTH * 0.9,
       alignSelf: 'center',
       marginTop: sizes.HEIGHT * 0.04,
+    },
 
-    },
-    eyeIcon: {},
-    // passContainer: {
-    //     display: "flex",
-    //     flexDirection: "row"
-    // },
-    header: {
-      // marginTop: height * 0.04
-    },
     forgotPassword: {
       color: 'green',
-      alignSelf: 'center',
+      alignSelf: 'flex-end',
       marginTop: sizes.HEIGHT * 0.01,
+      marginRight: sizes.WIDTH * 0.01,
+    },
+    forgotPasswordContainer: {
+      width: sizes.WIDTH * 0.9,
+      alignItems: 'flex-end',
     },
   });
 

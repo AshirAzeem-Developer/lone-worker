@@ -3,12 +3,20 @@ import {View} from 'react-native';
 import axios from 'axios';
 import CustomInput from '../../../components/CustomInput/CustomInput';
 import CustomButton from '../../../components/CustomButton/CustomButton';
-import {styles} from './Style';
+
 import CustomHeader from '../../../components/CustomHeader/CustomHeader';
 import api from '../../../services/api';
 import {useMessage} from '../../../components/MessageProvider/MessageProvider';
 import InputComponent from '../../../components/global/InputComponent';
-import {showError, showSuccess} from '../../../utils/helperFunction';
+import {
+  showError,
+  showSuccess,
+  showWarning,
+} from '../../../utils/helperFunction';
+import {validateEmail} from '../../../utils/validator';
+import icons from '../../../assets/icons';
+import {screen} from '../../../utils/constants';
+import useStyles from './Style';
 
 interface ForgotPasswordScreenProps {
   navigation: {
@@ -19,6 +27,7 @@ interface ForgotPasswordScreenProps {
 const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
   navigation,
 }) => {
+  const {styles, sizes} = useStyles();
   const [email, setEmail] = useState<string>('');
 
   const handleResetPassword = async () => {
@@ -28,7 +37,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
       showSuccess(response.data.message || 'Reset link sent to your email', '');
       setEmail('');
     } catch (error: any) {
-      showError(
+      showWarning(
         error.response?.data?.message || 'Failed to send reset link',
         '',
       );
@@ -38,7 +47,7 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
   return (
     <>
       <View style={styles.header}>
-        <CustomHeader title="Change Password" showBackButton />
+        <CustomHeader title="Forgot Password" showBackButton />
       </View>
 
       <View style={styles.container}>
@@ -47,6 +56,17 @@ const ForgotPasswordScreen: React.FC<ForgotPasswordScreenProps> = ({
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
+          errorHandler={[
+            {
+              errorText: 'Please enter a valid email',
+              validator: validateEmail,
+            },
+          ]}
+          leftIcon={icons.EMAIl}
+          iconStyles={{
+            width: screen.width * 0.05,
+            height: screen.width * 0.05,
+          }}
         />
         <CustomButton
           buttonStyle={styles.btn}
