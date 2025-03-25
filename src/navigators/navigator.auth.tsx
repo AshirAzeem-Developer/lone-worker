@@ -5,6 +5,7 @@ import Login from '../screens/Authentication/Login/Login';
 import ForgotPasswordScreen from '../screens/Authentication/ForgotPasswordScreen';
 import ChangePasswordScreen from '../screens/Authentication/ChangePasswordScreen';
 import ResetPasswordScreen from '../screens/Authentication/ResetPasswordScreen';
+import TestingScreen from '../screens/App/Testingscreen/TestingScreen';
 
 //Screens
 
@@ -23,6 +24,7 @@ function AuthStack() {
       <Stack.Screen name="ForgotPassword" component={ForgotPasswordScreen} />
       <Stack.Screen name="ChangePassword" component={ChangePasswordScreen} />
       <Stack.Screen name="ResetPassword" component={ResetPasswordScreen} />
+      <Stack.Screen name="Testing" component={TestingScreen} />
     </Stack.Navigator>
   );
 }

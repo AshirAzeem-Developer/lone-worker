@@ -4,10 +4,6 @@ import {
   Text,
   TouchableOpacity,
   Image,
-  StyleSheet,
-  ViewStyle,
-  TextStyle,
-  ImageStyle,
   StatusBar,
   Platform,
 } from 'react-native';
@@ -16,6 +12,8 @@ import {useNavigation} from '@react-navigation/native';
 import useStyles from './Style';
 import images from '../../assets/images';
 import icons from '../../assets/icons';
+import {DrawerNavigationProp} from '@react-navigation/drawer';
+import {DrawerParamList} from '../../navigators/navigators.params';
 
 interface CustomHeaderProps {
   title?: string;
@@ -40,7 +38,8 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
   barStyle = 'light-content',
   translucent = false,
 }) => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<DrawerNavigationProp<DrawerParamList>>();
+
   const {styles, sizes, colors} = useStyles();
 
   return (
@@ -88,7 +87,9 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
 
         {/* Right Icon */}
         {showMenu ? (
-          <TouchableOpacity onPress={() => {}} style={styles.sideButton}>
+          <TouchableOpacity
+            onPress={() => navigation.toggleDrawer()}
+            style={styles.sideButton}>
             <Image source={icons.MENU} style={[styles.icon]} />
           </TouchableOpacity>
         ) : rightIcon ? (

@@ -3,6 +3,7 @@ import CreateBottomTabs from './CreateBottomTabs';
 import Home from '../screens/App/Home';
 import icons from '../assets/icons';
 import {AppStackParamsList} from './navigators.params';
+import TestingScreen from '../screens/App/Testingscreen/TestingScreen';
 
 const Stack = createNativeStackNavigator<AppStackParamsList>();
 
@@ -101,22 +102,22 @@ const Stack = createNativeStackNavigator<AppStackParamsList>();
 //   );
 // };
 
-const BottomTabs = () => {
-  return (
-    <CreateBottomTabs
-      initialRouteName="Home"
-      screens={[
-        {
-          name: 'Home',
-          Component: Home,
-          icon: icons.CROSS,
-          selectedIcon: icons.CHECK,
-          label: 'Home',
-        },
-      ]}
-    />
-  );
-};
+// const BottomTabs = () => {
+//   return (
+//     <CreateBottomTabs
+//       initialRouteName="Home"
+//       screens={[
+//         {
+//           name: 'Home',
+//           Component: Home,
+//           icon: icons.CROSS,
+//           selectedIcon: icons.CHECK,
+//           label: 'Home',
+//         },
+//       ]}
+//     />
+//   );
+// };
 
 function AppStack() {
   return (
@@ -124,27 +125,8 @@ function AppStack() {
       screenOptions={{
         headerShown: false,
       }}
-      initialRouteName="HomeTabs">
-      <Stack.Screen name="HomeTabs" component={BottomTabs} />
-      {/* <Stack.Screen name="ProfileSettings" component={ProfileSettings} /> */}
-      {/* <Stack.Screen name="Notifications" component={Notifications} />
-      <Stack.Screen
-        name="NotificationSettings"
-        component={NotificationSetting}
-      />
-      <Stack.Screen name="Support" component={Support} />
-      <Stack.Screen name="PrivacyPolicy" component={PrivacyPolicy} />
-      <Stack.Screen name="WorkDetails" component={WorkDetails} />
-      <Stack.Screen name="ProfileDetail" component={ProfileDetail} />
-      <Stack.Screen name="OrderSummary" component={OrderSummary} />
-      <Stack.Screen name="StartStopWorking" component={StartStopWorking} />
-      <Stack.Screen name="ChatOpen" component={ChatOpen} />
-      <Stack.Screen name="AllProviders" component={AllProviderCards} />
-      <Stack.Screen name="MapScreen" component={MapScreen} />
-      <Stack.Screen name="ChangePassword" component={ChangePassword} />
-      <Stack.Screen name="Review" component={AddReviewScreen} />
-
-      <Stack.Screen name="Language" component={Language} /> */}
+      initialRouteName="TestingScreen">
+      <Stack.Screen name="TestingScreen" component={TestingScreen} />
     </Stack.Navigator>
   );
 }

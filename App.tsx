@@ -1,6 +1,7 @@
 import {NavigationContainer} from '@react-navigation/native';
 import React, {useState} from 'react';
 import {RootNavigator} from './src/navigators/navigator.root';
+import 'react-native-reanimated';
 
 //store
 import {Provider} from 'react-redux';

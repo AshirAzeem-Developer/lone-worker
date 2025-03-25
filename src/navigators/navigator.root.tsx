@@ -6,12 +6,13 @@ import Home from '../screens/App/Home/index.tsx';
 import Login from '../screens/Authentication/Login/Login.tsx';
 import AuthStack from './navigator.auth.tsx';
 import AppStack from './navigator.app.tsx';
+import DrawerNavigator from './navigator.drawer.tsx';
 
 const Stack = createNativeStackNavigator();
 
 export const RootNavigator = ({}) => {
-  const isAuthenticated = false;
+  const isAuthenticated = true;
   //   const user = useUserSelector();
   //   const [isSplashVisible, setIsSplashVisible] = useState(true);
-  return <>{isAuthenticated ? <AppStack /> : <AuthStack />}</>;
+  return <>{isAuthenticated ? <DrawerNavigator /> : <AuthStack />}</>;
 };
