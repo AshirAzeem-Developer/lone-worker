@@ -4,6 +4,7 @@ import CustomHeader from '../../../components/CustomHeader/CustomHeader';
 import {styles} from './style';
 import CustomDropdown from '../../../components/CustomDropDown/CustomDropdown';
 import CustomButton from '../../../components/CustomButton/CustomButton';
+import {screen} from '../../../utils/constants';
 
 export default function ManDownSettings() {
   const options1 = ['Man Down Off', 'Man Down On'];
@@ -59,6 +60,12 @@ export default function ManDownSettings() {
         </Text>
         <View style={styles.btn}>
           <CustomButton
+            onPress={() => console.log('Save Settings')}
+            buttonStyle={{
+              width: screen.width * 0.9,
+              height: 50,
+              backgroundColor: '#28A745',
+            }}
             title="Save Settings"
             backgroundColor="#28A745"
             textColor="#FFF"

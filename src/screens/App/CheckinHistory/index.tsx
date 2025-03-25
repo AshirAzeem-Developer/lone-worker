@@ -105,8 +105,12 @@ export default function CheckInHistory() {
                 disabled={page === 1}>
                 <Image
                   source={icons.CHECK}
-                  width={22}
-                  height={22}
+                  width={20}
+                  height={20}
+                  style={{
+                    width: 20,
+                    height: 20,
+                  }}
                   tintColor={page === 1 ? '#ccc' : '#333'}
                 />
               </TouchableOpacity>
@@ -138,7 +142,15 @@ export default function CheckInHistory() {
                 ]}
                 onPress={() => handlePageChange(page + 1)}
                 disabled={page === pagination.last_page}>
-                <Image source={icons.CHECK} width={22} height={22} />
+                <Image
+                  source={icons.CHECK}
+                  width={20}
+                  height={20}
+                  style={{
+                    width: 20,
+                    height: 20,
+                  }}
+                />
               </TouchableOpacity>
             </View>
           </>

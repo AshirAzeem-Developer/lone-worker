@@ -49,7 +49,8 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
         label="Logout"
         icon={() => (
           <Image
-            source={icons.CHECK}
+            tintColor={'green'}
+            source={icons.LOGOUT}
             width={20}
             height={20}
             style={{
@@ -73,40 +74,25 @@ export default function DrawerNavigator() {
         drawerStyle: {
           backgroundColor: 'white',
         },
-        drawerActiveTintColor: 'gray',
+        drawerActiveTintColor: 'black',
+
         drawerInactiveTintColor: 'green',
         drawerLabelStyle: {
           fontSize: 16,
+          fontWeight: 'normal',
         },
       }}
-      initialRouteName="Testing"
+      initialRouteName="Home"
       drawerContent={props => <CustomDrawerContent {...props} />}>
       <Drawer.Screen
-        name="HighRiskCheckIn"
-        component={HighRiskCheckIn}
-        options={{
-          headerShown: false,
-          drawerIcon: () => (
-            <Image
-              source={icons.CHECK}
-              width={20}
-              height={20}
-              style={{
-                width: 20,
-                height: 20,
-              }}
-            />
-          ),
-        }}
-      />
-      <Drawer.Screen
-        name="Testing"
+        name="Home"
         component={TestingScreen}
         options={{
           headerShown: false,
           drawerIcon: () => (
             <Image
-              source={icons.CHECK}
+              tintColor={'green'}
+              source={icons.HOME}
               width={20}
               height={20}
               style={{
@@ -118,13 +104,34 @@ export default function DrawerNavigator() {
         }}
       />
       <Drawer.Screen
-        name="ManDownSettings"
+        name="High Risk CheckIn"
+        component={HighRiskCheckIn}
+        options={{
+          headerShown: false,
+          drawerIcon: () => (
+            <Image
+              source={icons.EXCLAMATION}
+              tintColor={'green'}
+              width={20}
+              height={20}
+              style={{
+                width: 20,
+                height: 20,
+              }}
+            />
+          ),
+        }}
+      />
+
+      <Drawer.Screen
+        name="Man Down Settings"
         component={ManDownSettings}
         options={{
           headerShown: false,
           drawerIcon: () => (
             <Image
-              source={icons.CHECK}
+              source={icons.SETTINGS}
+              tintColor={'green'}
               width={20}
               height={20}
               style={{
@@ -136,13 +143,14 @@ export default function DrawerNavigator() {
         }}
       />
       <Drawer.Screen
-        name="ChangePassword"
+        name="Change Password"
         component={ChangePasswordScreen}
         options={{
           headerShown: false,
           drawerIcon: () => (
             <Image
-              source={icons.CHECK}
+              source={icons.LOCK}
+              tintColor={'green'}
               width={20}
               height={20}
               style={{
@@ -154,13 +162,52 @@ export default function DrawerNavigator() {
         }}
       />
       <Drawer.Screen
-        name="CheckInHistory"
+        name="CheckIn History"
         component={CheckInHistory}
         options={{
           headerShown: false,
           drawerIcon: () => (
             <Image
-              source={icons.CHECK}
+              source={icons.HISTORY}
+              width={20}
+              height={20}
+              style={{
+                width: 20,
+                height: 20,
+              }}
+              tintColor={'green'}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Notifications"
+        component={NotificationsScreen}
+        options={{
+          headerShown: false,
+          drawerIcon: () => (
+            <Image
+              source={icons.NOTIFICATION}
+              width={20}
+              height={20}
+              style={{
+                width: 20,
+                height: 20,
+              }}
+              tintColor={'green'}
+            />
+          ),
+        }}
+      />
+      <Drawer.Screen
+        name="Shift Details"
+        component={ShiftDetails}
+        options={{
+          headerShown: false,
+          drawerIcon: () => (
+            <Image
+              tintColor={'green'}
+              source={icons.ACCOUNT_DETAILS}
               width={20}
               height={20}
               style={{
@@ -171,26 +218,6 @@ export default function DrawerNavigator() {
           ),
         }}
       />
-      {/* <Drawer.Screen
-        name="NotificationsScreen"
-        component={NotificationsScreen}
-        options={{
-          headerShown: false,
-          drawerIcon: () => (
-            <Image source={icons.CHECK} width={20} height={20} />
-          ),
-        }}
-      /> */}
-      {/* <Drawer.Screen
-        name="ShiftDetails"
-        component={ShiftDetails}
-        options={{
-          headerShown: false,
-          drawerIcon: () => (
-            <Image source={icons.CHECK} width={20} height={20} />
-          ),
-        }}
-      /> */}
     </Drawer.Navigator>
   );
 }

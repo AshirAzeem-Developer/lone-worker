@@ -1,6 +1,7 @@
 import React, {useState} from 'react';
 import {View, StyleSheet, ViewStyle, TextStyle} from 'react-native';
 import {Dropdown} from 'react-native-element-dropdown';
+import {screen} from '../../utils/constants';
 
 interface CustomDropdownProps {
   options: string[];
@@ -58,11 +59,13 @@ interface Style {
 
 const styles = StyleSheet.create<Style>({
   container: {
-    width: '100%',
+    width: screen.width * 0.9,
+
     padding: 10,
   },
   dropdown: {
     height: 50,
+    width: '100%',
     borderColor: 'gray',
     borderWidth: 1,
     borderRadius: 8,

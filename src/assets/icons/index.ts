@@ -8,4 +8,10 @@ export default {
   BACK_ARROW: require('./back.png'),
   MENU: require('./menu.png'),
   LOCK: require('./lock.png'),
+  HOME: require('./home.png'),
+  SETTINGS: require('./settings.png'),
+  HISTORY: require('./history.png'),
+  NOTIFICATION: require('./notification-bell.png'),
+  ACCOUNT_DETAILS: require('./user-management.png'),
+  LOGOUT: require('./logout.png'),
 };
