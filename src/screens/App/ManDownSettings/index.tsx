@@ -23,7 +23,7 @@ export default function ManDownSettings() {
 
   return (
     <View>
-      <CustomHeader showBackButton showMenu />
+      <CustomHeader showMenu />
       <View style={styles.container}>
         <Text style={styles.text1}>
           when man down is turned on the system will alert your monitor if you

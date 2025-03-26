@@ -50,7 +50,7 @@ export default function HighRiskCheckIn({navigation}: any) {
   };
   return (
     <View>
-      <CustomHeader showMenu showBackButton />
+      <CustomHeader showMenu />
       <View style={styles.container}>
         <Text style={styles.heading}>High Risk CheckIn</Text>
 

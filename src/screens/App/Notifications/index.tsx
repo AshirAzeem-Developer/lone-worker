@@ -79,7 +79,7 @@ export default function NotificationsScreen() {
   };
   return (
     <>
-      <CustomHeader showBackButton showMenu />
+      <CustomHeader showMenu />
       <View style={styles.container}>
         <Text style={styles.heading}>Notifications</Text>
 

@@ -11,7 +11,7 @@ import DrawerNavigator from './navigator.drawer.tsx';
 const Stack = createNativeStackNavigator();
 
 export const RootNavigator = ({}) => {
-  const isAuthenticated = true;
+  const isAuthenticated = false;
   //   const user = useUserSelector();
   //   const [isSplashVisible, setIsSplashVisible] = useState(true);
   return <>{isAuthenticated ? <DrawerNavigator /> : <AuthStack />}</>;

@@ -56,7 +56,7 @@ export default function CheckInHistory() {
 
   return (
     <>
-      <CustomHeader showBackButton showMenu />
+      <CustomHeader showMenu />
       <View style={styles.container}>
         <Text style={styles.heading}>Check-In History</Text>
 

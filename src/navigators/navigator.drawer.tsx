@@ -24,6 +24,8 @@ import CheckInHistory from '../screens/App/CheckinHistory';
 import NotificationsScreen from '../screens/App/Notifications';
 import ShiftDetails from '../screens/App/ShiftDetails';
 import TestingScreen from '../screens/App/Testingscreen/TestingScreen';
+import images from '../assets/images';
+import {screen} from '../utils/constants';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -43,26 +45,40 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
   };
 
   return (
-    <DrawerContentScrollView {...props}>
-      <DrawerItemList {...props} />
-      <DrawerItem
-        label="Logout"
-        icon={() => (
-          <Image
-            tintColor={'green'}
-            source={icons.LOGOUT}
-            width={20}
-            height={20}
-            style={{
-              width: 20,
-              height: 20,
-            }}
-          />
-        )}
-        onPress={handleLogout}
-        labelStyle={{color: 'green', fontSize: 16}}
+    <>
+      <Image
+        source={images.LOGO}
+        style={{
+          width: screen.width * 0.5,
+          height: screen.height * 0.05,
+          alignSelf: 'flex-start',
+          marginTop: screen.height * 0.05,
+          // marginBottom: 20,
+          marginHorizontal: 20,
+          resizeMode: 'contain',
+        }}
       />
-    </DrawerContentScrollView>
+      <DrawerContentScrollView {...props}>
+        <DrawerItemList {...props} />
+        <DrawerItem
+          label="Logout"
+          icon={() => (
+            <Image
+              tintColor={'green'}
+              source={icons.LOGOUT}
+              width={20}
+              height={20}
+              style={{
+                width: 20,
+                height: 20,
+              }}
+            />
+          )}
+          onPress={handleLogout}
+          labelStyle={{color: 'green', fontSize: 16}}
+        />
+      </DrawerContentScrollView>
+    </>
   );
 }
 

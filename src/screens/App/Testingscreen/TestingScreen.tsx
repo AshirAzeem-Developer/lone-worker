@@ -168,51 +168,57 @@ export default function TestingScreen({navigation}: NavigationProps) {
   };
 
   return (
-    <View>
-      <CustomHeader title="Home" showBackButton showMenu />
-      {safetyTextShow ? (
-        <Text style={styles.timerText}>Please send your check-in!</Text>
-      ) : (
-        <View>
-          <Text style={styles.timerText}>Your next check-in is due in:</Text>
-          <Text style={styles.time}>{formatTime(timeRemaining)}</Text>
+    <View style={styles.container}>
+      <CustomHeader title="Home" showMenu />
+
+      <View style={styles.innerContainer}>
+        <View style={styles.card}>
+          {safetyTextShow ? (
+            <Text style={styles.alertText}>🚨 Please send your check-in!</Text>
+          ) : (
+            <>
+              <Text style={styles.timerLabel}>Next check-in in:</Text>
+              <Text style={styles.timerCountdown}>
+                {formatTime(timeRemaining)}
+              </Text>
+            </>
+          )}
+
+          <View style={styles.buttonGroup}>
+            <CustomButton
+              title="Check in"
+              onPress={handleCheckin}
+              loading={loading}
+              backgroundColor="#28A745"
+              textColor="#FFF"
+              borderRadius={12}
+              disabled={checkedIn}
+              buttonStyle={styles.button}
+            />
+
+            <CustomButton
+              title="End shift"
+              onPress={handleCheckOut}
+              loading={loading}
+              backgroundColor="#6C757D"
+              textColor="#FFF"
+              borderRadius={12}
+              disabled={!shiftStart}
+              buttonStyle={styles.button}
+            />
+
+            <CustomButton
+              title="Help"
+              onPress={() => {}}
+              backgroundColor="#DC3545"
+              textColor="#FFF"
+              borderRadius={12}
+              disabled={checkedIn}
+              buttonStyle={styles.button}
+            />
+          </View>
         </View>
-      )}
-
-      <CustomButton
-        title="Check in"
-        onPress={handleCheckin}
-        loading={loading}
-        backgroundColor="#28A745"
-        textColor="#FFF"
-        width="200"
-        borderRadius={10}
-        disabled={checkedIn}
-        buttonStyle={styles.loginbtn}
-      />
-
-      <CustomButton
-        title="End shift"
-        onPress={handleCheckOut}
-        loading={loading}
-        backgroundColor="#28A745"
-        textColor="#FFF"
-        width="200"
-        borderRadius={10}
-        disabled={!shiftStart}
-        buttonStyle={styles.btn}
-      />
-
-      <CustomButton
-        title="Help"
-        onPress={() => {}}
-        backgroundColor="red"
-        textColor="#FFF"
-        width="200"
-        borderRadius={10}
-        disabled={checkedIn}
-        buttonStyle={styles.btn}
-      />
+      </View>
     </View>
   );
 }

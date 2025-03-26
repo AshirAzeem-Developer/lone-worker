@@ -90,7 +90,7 @@ const CustomHeader: React.FC<CustomHeaderProps> = ({
           <TouchableOpacity
             onPress={() => navigation.toggleDrawer()}
             style={styles.sideButton}>
-            <Image source={icons.MENU} style={[styles.icon]} />
+            <Image source={icons.MENU} style={styles.icon} tintColor={'#fff'} />
           </TouchableOpacity>
         ) : rightIcon ? (
           <TouchableOpacity

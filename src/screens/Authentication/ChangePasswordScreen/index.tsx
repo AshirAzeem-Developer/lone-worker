@@ -81,7 +81,7 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
 
   return (
     <>
-      <CustomHeader title="Change Password" showBackButton showMenu />
+      <CustomHeader title="Change Password" showMenu />
 
       <View style={styles.container}>
         <InputComponent

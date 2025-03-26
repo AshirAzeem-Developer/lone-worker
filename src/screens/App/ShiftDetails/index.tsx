@@ -46,7 +46,7 @@ export default function ShiftDetails() {
   ];
   return (
     <>
-      <CustomHeader showBackButton showMenu />
+      <CustomHeader showMenu />
       <View style={styles.container}>
         <Text style={styles.heading}>ShiftDetails</Text>
         {loading ? (
