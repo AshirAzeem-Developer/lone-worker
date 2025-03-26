@@ -1,18 +1,26 @@
-import React from 'react';
-import {createNativeStackNavigator} from '@react-navigation/native-stack';
+import React, {useEffect, useState} from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
-//Screens
-import Home from '../screens/App/Home/index.tsx';
-import Login from '../screens/Authentication/Login/Login.tsx';
+// Navigators
 import AuthStack from './navigator.auth.tsx';
-import AppStack from './navigator.app.tsx';
 import DrawerNavigator from './navigator.drawer.tsx';
+import {useDispatch, useSelector} from 'react-redux';
+import {checkAuth} from '../store/reducer/authSlice.ts';
 
-const Stack = createNativeStackNavigator();
+const RootNavigator = () => {
+  const dispatch = useDispatch();
+  const {isAuthenticated, loading} = useSelector(
+    (state: RootState) => state.auth,
+  );
 
-export const RootNavigator = ({}) => {
-  const isAuthenticated = false;
-  //   const user = useUserSelector();
-  //   const [isSplashVisible, setIsSplashVisible] = useState(true);
-  return <>{isAuthenticated ? <DrawerNavigator /> : <AuthStack />}</>;
+  useEffect(() => {
+    dispatch(checkAuth());
+  }, []);
+
+  if (loading) return null; // Splash or loader
+
+  return isAuthenticated ? <DrawerNavigator /> : <AuthStack />;
 };
+
+export default RootNavigator;

@@ -19,6 +19,8 @@ import {validatePassword, validatePin} from '../../../utils/validator';
 import CustomButton from '../../../components/CustomButton/CustomButton';
 import icons from '../../../assets/icons';
 import {screen} from '../../../utils/constants';
+import {loginSuccess} from '../../../store/reducer/authSlice';
+import {useDispatch} from 'react-redux';
 
 interface LoginScreenProps {
   navigation: {
@@ -27,6 +29,7 @@ interface LoginScreenProps {
 }
 
 const Login: React.FC<LoginScreenProps> = ({navigation}) => {
+  const dispatch = useDispatch();
   const {styles, colors} = useStyles();
 
   const [pin, setPin] = useState<string>('');
@@ -41,7 +44,8 @@ const Login: React.FC<LoginScreenProps> = ({navigation}) => {
       const response = await login(pin, password, push_token as string);
       showSuccess('Login successful!', '');
       await EncryptedStorage.setItem('token', response.token);
-      navigation.navigate('Testing');
+      // navigation.navigate('Testing');
+      dispatch(loginSuccess());
       setPassword('');
       setPin('');
     } catch (error: any) {
