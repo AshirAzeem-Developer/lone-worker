@@ -30,6 +30,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import {useDispatch} from 'react-redux';
 import {logout} from '../store/reducer/authSlice';
 import {useAppDispatch} from '../store/reducer/hooks';
+import {showSuccess} from '../utils/helperFunction';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -43,7 +44,7 @@ function CustomDrawerContent(props: DrawerContentComponentProps) {
     try {
       await signout(); // API call if needed
       dispatch(logout()); // removes token + updates auth state
-      Alert.alert('Success', 'Signout successful!');
+      showSuccess('Signout Successfull', 'Signout successful!');
     } catch (error: any) {
       Alert.alert('Error', error.message || 'Signout failed');
     }
