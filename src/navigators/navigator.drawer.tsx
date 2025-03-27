@@ -29,6 +29,7 @@ import {screen} from '../utils/constants';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {useDispatch} from 'react-redux';
 import {logout} from '../store/reducer/authSlice';
+import {useAppDispatch} from '../store/reducer/hooks';
 
 const Stack = createNativeStackNavigator();
 const Drawer = createDrawerNavigator();
@@ -36,7 +37,7 @@ const Drawer = createDrawerNavigator();
 function CustomDrawerContent(props: DrawerContentComponentProps) {
   const navigation = useNavigation<NavigationProp<any>>();
 
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
 
   const handleLogout = async () => {
     try {
