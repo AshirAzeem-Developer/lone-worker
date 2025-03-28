@@ -23,6 +23,17 @@
       <intent-filter>
         <action android:name="android.intent.action.MAIN" />
         <category android:name="android.intent.category.LAUNCHER" />
+        <data android:scheme="loneworker" />
+        <data android:scheme="com.loneworker" />
+      </intent-filter>
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data
+          android:scheme="https"
+          android:host="loneworker.etgraphics.net"
+          android:pathPrefix="/reset-password" />
       </intent-filter>
     </activity>
   </application>

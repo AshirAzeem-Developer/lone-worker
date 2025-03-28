@@ -29,7 +29,9 @@ const App = () => {
 
     // Handle deep linking
     const removeLinkListener = navigationRef.current
-      ? initDeepLinking(navigationRef.current)
+      ? initDeepLinking(
+          navigationRef as React.RefObject<NavigationContainerRef<any>>,
+        )
       : undefined;
 
     return () => {

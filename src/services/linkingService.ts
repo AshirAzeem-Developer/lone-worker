@@ -1,9 +1,13 @@
 // linkingService.ts - Manages deep linking events and navigation
 import {Linking} from 'react-native';
-import {NavigationContainerRef} from '@react-navigation/native';
+import {
+  NavigationContainerRef,
+  NavigationContainerRefContext,
+} from '@react-navigation/native';
+import {RefObject} from 'react';
 
 export function initDeepLinking(
-  navigationRef: NavigationContainerRef<any>,
+  navigationRef: RefObject<NavigationContainerRef<any>>, // ✅ Correct type
 ): () => void {
   // Handle the case where the app was opened via a deep link while closed
   Linking.getInitialURL().then(initialUrl => {
@@ -25,20 +29,23 @@ export function initDeepLinking(
 
 function handleDeepLink(
   url: string,
-  navigationRef: NavigationContainerRef<any>,
+  navigationRef: RefObject<NavigationContainerRef<any>>,
 ) {
-  // Parse the URL to determine navigation target
-  // Example: app scheme URL like "myapp://Post/42" -> screen "Post" with id 42
-  const urlWithoutScheme = url.replace(/.*?:\/\//, ''); // Remove scheme (e.g., "myapp://")
-  const [screen, param] = urlWithoutScheme.split('/'); // e.g., screen="Post", param="42"
+  console.log('Received deep link:', url);
 
-  if (screen && navigationRef.current) {
-    if (param) {
-      // Navigate to the screen with a parameter (if provided)
-      navigationRef.current.navigate(screen as never, {id: param} as never);
-    } else {
-      // Navigate to the screen without parameters
-      navigationRef.current.navigate(screen as never);
+  try {
+    const parsedUrl = new URL(url);
+    const path = parsedUrl.pathname; // e.g. /resetpassword
+    const code = parsedUrl.searchParams.get('code');
+    const email = parsedUrl.searchParams.get('email');
+
+    if (path === '/reset-password' && code && email && navigationRef.current) {
+      navigationRef.current.navigate('ResetPassword', {
+        code,
+        email,
+      });
     }
+  } catch (e) {
+    console.warn('Invalid deep link URL:', e);
   }
 }
