@@ -13,28 +13,22 @@ import RootNavigator from './src/navigators/navigator.root';
 
 import {configureNotifications} from './src/services/notificationService';
 import {initDeepLinking} from './src/services/linkingService';
-import {getSecureItem} from './src/services/storageService';
-import {getPushTokenAndSave} from './src/services/notificationService';
 
 const App = () => {
   const [show, setShow] = useState(true);
   const navigationRef = useRef<NavigationContainerRef<any>>(null);
 
   useEffect(() => {
-    // Initialize push notifications
+    // Wait for notification permission + token setup
     configureNotifications();
 
-    // Generate and save token to EncryptedStorage
-    getPushTokenAndSave();
+    const timeout = setTimeout(() => {
+      if (navigationRef.current) {
+        initDeepLinking(navigationRef.current);
+      }
+    }, 1000); // Delay slightly to ensure navigationRef is not null
 
-    // Handle deep linking
-    const removeLinkListener = navigationRef.current
-      ? initDeepLinking(navigationRef.current)
-      : undefined;
-
-    return () => {
-      removeLinkListener?.();
-    };
+    return () => clearTimeout(timeout);
   }, []);
 
   return (

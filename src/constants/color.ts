@@ -1,4 +1,4 @@
-import { useColorScheme } from 'react-native';
+import {useColorScheme} from 'react-native';
 
 const defaultColors = {
   PRIMARY: '#fd5701',

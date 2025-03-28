@@ -85,11 +85,9 @@ export default function TestingScreen({navigation}: NavigationProps) {
           response.grace_period_end.toString(),
         );
       }
-
       showSuccess('Checked in successfully', '');
       setCheckedIn(true);
       setSafetyTextShow(false);
-
       const frequency = 120; // seconds
       const newEndTime = checkinTime.getTime() + frequency * 1000;
       setEndTime(newEndTime);
@@ -97,7 +95,7 @@ export default function TestingScreen({navigation}: NavigationProps) {
       await scheduleNotification(newEndTime);
     } catch (error: any) {
       console.log('Check-in Error:', error);
-      showError(error?.message || 'Check-in failed', '');
+      showError(error?.error || 'Check-in failed', '');
     }
   };
 

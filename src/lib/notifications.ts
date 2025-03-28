@@ -4,10 +4,10 @@ import {Alert, Platform} from 'react-native';
 
 export const initializeNotifications = () => {
   PushNotification.configure({
-    onRegister: function (token) {
+    onRegister: function (token: any) {
       console.log('Push Notification Token:', token);
     },
-    onNotification: function (notification) {
+    onNotification: function (notification: any) {
       console.log('Notification Received:', notification);
       if (Platform.OS === 'ios') {
         notification.finish(PushNotificationIOS.FetchResult.NoData);
@@ -30,7 +30,7 @@ export const initializeNotifications = () => {
         importance: 4,
         vibrate: true,
       },
-      created => console.log(`Channel created: ${created}`),
+      (created: any) => console.log(`Channel created: ${created}`),
     );
   }
 };
@@ -44,7 +44,7 @@ export const registerForPushNotificationsAsync = async () => {
         importance: 4,
         vibrate: true,
       },
-      created => console.log(`Channel created: ${created}`),
+      (created: any) => console.log(`Channel created: ${created}`),
     );
   }
 
@@ -58,11 +58,11 @@ export const registerForPushNotificationsAsync = async () => {
     }
   } catch (error) {
     console.error('Push Notification Permission Error:', error);
-    Alert.alert('Error', error.message);
+    Alert.alert('Error', error?.message);
   }
 };
 
-export const schedulePushNotification = async time => {
+export const schedulePushNotification = async (time: any) => {
   PushNotification.localNotificationSchedule({
     channelId: 'default',
     title: 'Your Loneworker Check-in is due',

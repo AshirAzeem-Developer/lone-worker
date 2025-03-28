@@ -41,6 +41,9 @@ const Login: React.FC<LoginScreenProps> = ({navigation}) => {
     setLoading(true);
     try {
       const push_token = await EncryptedStorage.getItem('push_token');
+
+      console.log('This is the Token ', push_token);
+
       const response = await login(pin, password, push_token as string);
       showSuccess('Login successful!', '');
       await EncryptedStorage.setItem('token', response.token);
@@ -101,6 +104,7 @@ const Login: React.FC<LoginScreenProps> = ({navigation}) => {
 
             <View style={styles.container}>
               <InputComponent
+                style={styles.input}
                 label="Enter Pin"
                 onChangeText={setPin}
                 value={pin}

@@ -47,6 +47,9 @@ const useStyles = () => {
       width: sizes.WIDTH * 0.9,
       alignItems: 'flex-end',
     },
+    input: {
+      ...globalStyles.TEXT_STYLE,
+    },
   });
 
   return {

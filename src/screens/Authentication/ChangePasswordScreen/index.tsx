@@ -87,13 +87,13 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
         <InputComponent
           leftIcon={icons.LOCK}
           leftIconStyle={{
-            width: sizes.WIDTH * 0.06,
-            height: sizes.WIDTH * 0.06,
+            width: sizes.WIDTH * 0.05,
+            height: sizes.WIDTH * 0.05,
           }}
           rightIcon={showPassword ? icons.EYE : icons.EYECROSS}
           rightIconStyle={{
-            width: sizes.WIDTH * 0.06,
-            height: sizes.WIDTH * 0.06,
+            width: sizes.WIDTH * 0.05,
+            height: sizes.WIDTH * 0.05,
           }}
           value={oldPassword}
           onChangeText={setOldPassword}
@@ -105,13 +105,13 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
         <InputComponent
           leftIcon={icons.LOCK}
           leftIconStyle={{
-            width: sizes.WIDTH * 0.06,
-            height: sizes.WIDTH * 0.06,
+            width: sizes.WIDTH * 0.05,
+            height: sizes.WIDTH * 0.05,
           }}
           rightIcon={showNewPassword ? icons.EYE : icons.EYECROSS}
           rightIconStyle={{
-            width: sizes.WIDTH * 0.06,
-            height: sizes.WIDTH * 0.06,
+            width: sizes.WIDTH * 0.05,
+            height: sizes.WIDTH * 0.05,
           }}
           onRightIconPress={() => setShowNewPassword(!showNewPassword)}
           secureTextEntry={showNewPassword ? false : true}
@@ -124,13 +124,13 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
         <InputComponent
           leftIcon={icons.LOCK}
           leftIconStyle={{
-            width: sizes.WIDTH * 0.06,
-            height: sizes.WIDTH * 0.06,
+            width: sizes.WIDTH * 0.05,
+            height: sizes.WIDTH * 0.05,
           }}
           rightIcon={showConfirmPassword ? icons.EYE : icons.EYECROSS}
           rightIconStyle={{
-            width: sizes.WIDTH * 0.06,
-            height: sizes.WIDTH * 0.06,
+            width: sizes.WIDTH * 0.05,
+            height: sizes.WIDTH * 0.05,
           }}
           onRightIconPress={() => setShowConfirmPassword(!showConfirmPassword)}
           secureTextEntry={showConfirmPassword ? false : true}
@@ -162,6 +162,7 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
           elevation: 5,
         }}>
         <CustomButton
+          disabled={!oldPassword || !newPassword || !confirmPassword}
           title="Update"
           onPress={handleChangePassword}
           buttonStyle={styles.btn}

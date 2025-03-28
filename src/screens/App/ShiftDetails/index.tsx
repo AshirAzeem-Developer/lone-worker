@@ -1,38 +1,57 @@
-import {View, Text} from 'react-native';
+import {View, Text, RefreshControl, ScrollView} from 'react-native';
 import React, {useEffect, useState} from 'react';
 import CustomHeader from '../../../components/CustomHeader/CustomHeader';
-import {styles} from './style';
-import {ActivityIndicator, DataTable} from 'react-native-paper';
+
+import {ActivityIndicator} from 'react-native-paper';
 
 import {getShiftHistory} from '../../../services/ShiftDetails';
 import {showError} from '../../../utils/helperFunction';
+import useStyles from './style';
+import {ShiftData} from '../../../types/globalTypes';
 
 export default function ShiftDetails() {
-  const [shiftdata, setshiftdata] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const {styles} = useStyles();
+  const [shiftdata, setshiftdata] = useState<ShiftData[]>([]);
   const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const data = await getShiftHistory();
-        setLoading(true);
-        console.log('Shift Data:', data);
-        if (!data) {
-          console.log('no details found');
-          showError('No Shift Details found', '');
-          return;
-        } else {
-          setLoading(false);
-          setshiftdata(data);
-          console.log('shfit', data);
-          return;
-        }
-      } catch (error) {
-        console.log(error);
+  const fetchData = async () => {
+    try {
+      if (!refreshing) setLoading(true);
+
+      const rawData = await getShiftHistory();
+
+      const formattedData: ShiftData[] = (rawData || []).map((item: any) => ({
+        id: Math.random(),
+        customer_name: item.customer_name || '',
+        site_name: item.site_name || '',
+        days: item.days ? JSON.parse(item.days) : [],
+        start_time: item.start_time || '',
+        end_time: item.end_time || '',
+      }));
+
+      if (formattedData.length === 0) {
+        showError('No Shift Details found', '');
       }
-    };
+
+      setshiftdata(formattedData);
+    } catch (error) {
+      console.error('Error fetching shift data:', error);
+      showError('Failed to fetch shift details', '');
+    } finally {
+      setLoading(false);
+      setRefreshing(false);
+    }
+  };
+
+  useEffect(() => {
     fetchData();
   }, []);
+
+  const onRefresh = () => {
+    setRefreshing(true);
+    fetchData();
+  };
 
   const dummyShifts = [
     {
@@ -47,68 +66,57 @@ export default function ShiftDetails() {
   return (
     <>
       <CustomHeader showMenu />
-      <View style={styles.container}>
+
+      <ScrollView
+        contentContainerStyle={styles.container}
+        refreshControl={
+          <RefreshControl
+            refreshing={refreshing}
+            onRefresh={onRefresh}
+            colors={['#28A745']}
+            tintColor="#28A745"
+          />
+        }>
         <Text style={styles.heading}>ShiftDetails</Text>
-        {loading ? (
-          <>
-            <ActivityIndicator size="large" color="#28A745" />
-          </>
+
+        {loading && !refreshing ? (
+          <ActivityIndicator size="large" color="#28A745" />
         ) : (
-          <>
-            {shiftdata.map((index, key) => (
-              <DataTable
-                key={key}
-                style={{
-                  backgroundColor: '#EDEDED',
-                  marginTop: 10,
-                  alignSelf: 'center',
-                }}>
-                {/* Display as columns instead of rows */}
-                <View style={{flexDirection: 'column', padding: 10}}>
-                  <View style={{flexDirection: 'row', marginBottom: 5}}>
-                    <Text style={{fontWeight: 'bold', width: 100}}>
-                      Customer:
-                    </Text>
-                    <Text style={{color: 'black'}}>{index.customer_name}</Text>
-                  </View>
-
-                  <View style={{flexDirection: 'row', marginBottom: 5}}>
-                    <Text style={{fontWeight: 'bold', width: 100}}>
-                      SiteName:
-                    </Text>
-                    <Text>{index.site_name}</Text>
-                  </View>
-
-                  <View style={{flexDirection: 'row', marginBottom: 5}}>
-                    <Text style={{fontWeight: 'bold', width: 100}}>Days:</Text>
-                    <Text>
-                      {index.days && index.days !== 'null'
-                        ? Array.isArray(index.days)
-                          ? index.days.join(', ')
-                          : JSON.parse(index.days).join(', ')
-                        : 'N/A'}
-                    </Text>
-                  </View>
-
-                  <View style={{flexDirection: 'row', marginBottom: 5}}>
-                    <Text style={{fontWeight: 'bold', width: 100}}>
-                      StartTime:
-                    </Text>
-                    <Text>{index.start_time}</Text>
-                  </View>
-
-                  <View style={{flexDirection: 'row', marginBottom: 5}}>
-                    <Text style={{fontWeight: 'bold', width: 100}}>
-                      EndTime:
-                    </Text>
-                    <Text>{index.end_time}</Text>
-                  </View>
+          shiftdata.map((index, key) => (
+            <View key={key} style={styles.shiftCard}>
+              <View style={styles.row}>
+                <Text style={styles.label}>Customer:</Text>
+                <Text style={styles.value}>{index.customer_name}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Site Name:</Text>
+                <Text style={styles.value}>{index.site_name}</Text>
+              </View>
+              <View style={[styles.row, {alignItems: 'flex-start'}]}>
+                <Text style={styles.label}>Days:</Text>
+                <View style={styles.dayContainer}>
+                  {(Array.isArray(index.days)
+                    ? index.days
+                    : JSON.parse(index.days)
+                  ).map((day: string, idx: number) => (
+                    <View key={idx} style={styles.dayPill}>
+                      <Text style={styles.dayText}>{day}</Text>
+                    </View>
+                  ))}
                 </View>
-              </DataTable>
-            ))}
-          </>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>Start Time:</Text>
+                <Text style={styles.value}>{index.start_time}</Text>
+              </View>
+              <View style={styles.row}>
+                <Text style={styles.label}>End Time:</Text>
+                <Text style={styles.value}>{index.end_time}</Text>
+              </View>
+            </View>
+          ))
         )}
-      </View>
+      </ScrollView>
     </>
   );
 }
