@@ -7,6 +7,7 @@ import CustomHeader from '../../../components/CustomHeader/CustomHeader';
 import CustomButton from '../../../components/CustomButton/CustomButton';
 import {attendance, checkIn, checkOut} from '../../../services/checkinService';
 import {showError, showSuccess} from '../../../utils/helperFunction';
+import {requestExactAlarmPermission} from '../../../services/notificationService';
 
 const {width, height} = Dimensions.get('window');
 
@@ -60,6 +61,9 @@ export default function TestingScreen({navigation}: NavigationProps) {
     try {
       if (!shiftStart) {
         const response = await attendance(checkinTime.toISOString());
+
+        console.log('this is the checkIn response : ', response);
+
         setShiftStart(true);
         await AsyncStorage.setItem(
           'checkInID',
@@ -94,9 +98,10 @@ export default function TestingScreen({navigation}: NavigationProps) {
       const newEndTime = checkinTime.getTime() + frequency * 1000;
       setEndTime(newEndTime);
       setTimeRemaining(frequency);
+      await requestExactAlarmPermission();
       await scheduleNotification(newEndTime);
     } catch (error: any) {
-      console.log('Check-in Error:', error);
+      console.log('Check-in Error from Catch Block:', error);
       showError(error?.message || 'Check-in failed', '');
     }
   };

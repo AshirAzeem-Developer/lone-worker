@@ -10,13 +10,11 @@ export const attendance = async (
   checkin_time: string,
 ): Promise<AttendanceResponse> => {
   try {
-    const response = await api.post<{data: AttendanceResponse}>(
-      '/worker/attendance',
-      {
-        checkin_time,
-      },
-    );
-    return response.data.data;
+    const response = await api.post<AttendanceResponse>('/worker/attendance', {
+      checkin_time,
+    });
+    console.log('This is the API response', response);
+    return response.data;
   } catch (error: any) {
     console.error('Check-in error:', error.response?.data || error.message);
     throw error.response?.data || {message: 'Check-in failed'};

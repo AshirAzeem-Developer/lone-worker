@@ -54,3 +54,23 @@ export async function configureNotifications(): Promise<void> {
     requestPermissions: Platform.OS === 'ios',
   });
 }
+export async function requestExactAlarmPermission(): Promise<void> {
+  if (Platform.OS === 'android' && Platform.Version >= 31) {
+    Alert.alert(
+      'Exact Alarm Permission Needed',
+      'To allow scheduled safety check-ins, please enable "Schedule exact alarms" in app settings.',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Open Settings',
+          onPress: () => {
+            Linking.openSettings();
+          },
+        },
+      ],
+    );
+  }
+}
