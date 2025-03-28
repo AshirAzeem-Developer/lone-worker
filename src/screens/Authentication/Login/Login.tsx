@@ -21,6 +21,7 @@ import icons from '../../../assets/icons';
 import {screen} from '../../../utils/constants';
 import {loginSuccess} from '../../../store/reducer/authSlice';
 import {useDispatch} from 'react-redux';
+import PushNotification from 'react-native-push-notification';
 
 interface LoginScreenProps {
   navigation: {
@@ -39,9 +40,15 @@ const Login: React.FC<LoginScreenProps> = ({navigation}) => {
 
   const handleLogin = async () => {
     setLoading(true);
+    // PushNotification.localNotification({
+    //   channelId: 'default',
+    //   title: 'Test Notification',
+    //   message: 'Hello from local notification!',
+    // });
     try {
       const push_token = await EncryptedStorage.getItem('push_token');
       const response = await login(pin, password, push_token as string);
+      console.log('Token is', push_token);
       showSuccess('Login successful!', '');
       await EncryptedStorage.setItem('token', response.token);
       // navigation.navigate('Testing');
