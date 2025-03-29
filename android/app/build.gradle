@@ -108,15 +108,19 @@ android {
 }
 
 dependencies {
+  
     // The version of react-native is set by the React Native Gradle Plugin
     implementation("com.facebook.react:react-android")
     // Use Firebase BoM
+  
+
   implementation platform('com.google.firebase:firebase-bom:33.11.0')
 
   // Firebase dependencies (no versions)
   implementation 'com.google.firebase:firebase-messaging'
   implementation 'com.google.firebase:firebase-analytics'
-
+  
+   implementation project(':react-native-push-notification')
 
   // Add the dependencies for any other desired Firebase products
   // https://firebase.google.com/docs/android/setup#available-libraries

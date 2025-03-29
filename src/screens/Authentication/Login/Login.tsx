@@ -63,6 +63,7 @@ const Login: React.FC<LoginScreenProps> = ({navigation}) => {
         showError(error.errors?.password || 'Password is required', '');
       } else {
         showError(error.message || 'Login failed', '');
+        console.log('Login error:', error);
       }
     } finally {
       setLoading(false);

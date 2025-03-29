@@ -28,7 +28,8 @@ const App = () => {
       importance: 4,
       vibrate: true,
     },
-    (created: any) => console.log(`Notification channel created: ${created}`),
+    (created: any) =>
+      console.log(`Notification channel created from App.tsx: ${created}`),
   );
 
   useEffect(() => {
