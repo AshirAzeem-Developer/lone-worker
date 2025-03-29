@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -80,6 +80,26 @@ const Login: React.FC<LoginScreenProps> = ({navigation}) => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const checkToken = async () => {
+      let retries = 0;
+      let token = null;
+      while (!token && retries < 5) {
+        token = await EncryptedStorage.getItem('push_token');
+        if (!token) {
+          await new Promise(res => setTimeout(res, 1000)); // wait 1 sec
+          retries++;
+        }
+      }
+      if (!token) {
+        showError(
+          'Push token not ready. Please wait a moment and try again.',
+          '',
+        );
+      }
+    };
+    checkToken();
+  }, []);
 
   return (
     <>
