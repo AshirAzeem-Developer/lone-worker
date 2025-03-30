@@ -18,11 +18,27 @@ export const initializeLocalNotifications = (
   PushNotification.configure({
     onNotification: function (notification: any) {
       console.log('📥 Notification received:', notification);
+
       if (notification.userInteraction) {
-        navigation.navigate('Shift Details');
-        onTap();
+        const type = notification.data?.type || notification.userInfo?.type;
+        console.log('🔍 Notification type:', type);
+
+        switch (type) {
+          case 'local_checkin':
+            navigation.navigate('Home');
+            break;
+          case 'missed_checkin':
+            navigation.navigate('EscalationScreen');
+            break;
+
+          default:
+            navigation.navigate('Shift Details');
+        }
+
+        onTap(); // optional callback
       }
     },
+
     // ✅ Ask permissions on all platforms including Android 13+
     requestPermissions: true,
   });

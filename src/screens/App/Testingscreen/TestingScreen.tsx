@@ -51,6 +51,9 @@ export default function TestingScreen({navigation}: NavigationProps) {
             soundName: 'default',
             importance: 'high',
             priority: 'high',
+            data: {
+              type: 'missed_checkin',
+            },
           });
 
           showError('Grace Period has expired! Escalation started!', '');
@@ -173,7 +176,7 @@ export default function TestingScreen({navigation}: NavigationProps) {
   };
 
   const scheduleNotification = async (timestamp: number) => {
-    cancelAllNotifications(); // Cancel previous ones if any
+    // cancelAllNotifications(); // Cancel previous ones if any
 
     const utcDate = new Date(timestamp); // timestamp is in ms, UTC by default
     console.log('📅 Scheduling notification at UTC:', utcDate.toUTCString());
@@ -189,6 +192,9 @@ export default function TestingScreen({navigation}: NavigationProps) {
       soundName: 'default',
       importance: 'high',
       priority: 'high',
+      data: {
+        type: 'local_checkin',
+      },
     });
   };
 
@@ -252,7 +258,7 @@ export default function TestingScreen({navigation}: NavigationProps) {
               disabled={checkedIn}
               buttonStyle={styles.button}
             />
-            <CustomButton
+            {/* <CustomButton
               title="Test Notification"
               onPress={() => {
                 const date = new Date(Date.now() + 60 * 1000); // 1 minute from now
@@ -278,7 +284,7 @@ export default function TestingScreen({navigation}: NavigationProps) {
 
                 // Debug: Check all scheduled notifications
                 PushNotification.getScheduledLocalNotifications(
-                  notifications => {
+                  (notifications: any) => {
                     console.log('📋 Scheduled Notifications:', notifications);
 
                     const match = notifications.find(
@@ -305,7 +311,7 @@ export default function TestingScreen({navigation}: NavigationProps) {
               textColor="#FFF"
               borderRadius={12}
               buttonStyle={styles.button}
-            />
+            /> */}
             {/* <CustomButton
               title="Send Immediate Notification"
               onPress={() => {
