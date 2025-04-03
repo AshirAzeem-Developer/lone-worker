@@ -1,5 +1,11 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Dimensions, Platform} from 'react-native';
+import {
+  View,
+  Text,
+  Dimensions,
+  Platform,
+  PermissionsAndroid,
+} from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import useStyles from './style';
@@ -7,6 +13,7 @@ import CustomHeader from '../../../components/CustomHeader/CustomHeader';
 import CustomButton from '../../../components/CustomButton/CustomButton';
 import {attendance, checkIn, checkOut} from '../../../services/checkinService';
 import {showError, showSuccess} from '../../../utils/helperFunction';
+import {initializeLocalNotifications} from '../../../services/setupNotifications';
 
 const {width, height} = Dimensions.get('window');
 
@@ -34,6 +41,21 @@ export default function TestingScreen({navigation}: NavigationProps) {
 
         if (remaining === 0 && safetyTextShow) {
           clearInterval(timer);
+
+          // 🔔 Show local notification here
+          PushNotification.localNotification({
+            channelId: 'default',
+            title: 'Safety Check-In Missed!',
+            message: 'You didn’t check in. Escalation started!',
+            playSound: true,
+            soundName: 'default',
+            importance: 'high',
+            priority: 'high',
+            data: {
+              type: 'missed_checkin',
+            },
+          });
+
           showError('Grace Period has expired! Escalation started!', '');
           setSafetyTextShow(false);
           setCheckedIn(false);
@@ -44,15 +66,17 @@ export default function TestingScreen({navigation}: NavigationProps) {
   }, [shiftStart, endTime, safetyTextShow]);
 
   useEffect(() => {
-    PushNotification.configure({
-      onNotification: function (notification: any) {
-        console.log('NOTIFICATION:', notification);
-        if (notification.userInteraction) {
-          initiateSafetyCheck();
-        }
-      },
-      requestPermissions: Platform.OS === 'ios',
-    });
+    const requestAndroidPermission = async () => {
+      if (Platform.OS === 'android' && Platform.Version >= 33) {
+        const granted = await PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS,
+        );
+        console.log('🔐 POST_NOTIFICATIONS granted:', granted);
+      }
+    };
+
+    initializeLocalNotifications(initiateSafetyCheck, navigation);
+    requestAndroidPermission();
   }, []);
 
   const handleCheckin = async () => {
@@ -60,6 +84,9 @@ export default function TestingScreen({navigation}: NavigationProps) {
     try {
       if (!shiftStart) {
         const response = await attendance(checkinTime.toISOString());
+
+        console.log('this is the checkIn response : ', response);
+
         setShiftStart(true);
         await AsyncStorage.setItem(
           'checkInID',
@@ -76,6 +103,8 @@ export default function TestingScreen({navigation}: NavigationProps) {
           Number(worker_check_in_id),
           checkinTime.toISOString(),
         );
+
+        console.log("'this is the checkIn response from else block:", response);
         await AsyncStorage.setItem(
           'checkInID',
           response.worker_check_in_id.toString(),
@@ -93,10 +122,11 @@ export default function TestingScreen({navigation}: NavigationProps) {
       const frequency = 120; // seconds
       const newEndTime = checkinTime.getTime() + frequency * 1000;
       setEndTime(newEndTime);
+      console.log('New End Time: ', newEndTime);
       setTimeRemaining(frequency);
       await scheduleNotification(newEndTime);
     } catch (error: any) {
-      console.log('Check-in Error:', error);
+      console.log('Check-in Error from Catch Block:', error);
       showError(error?.message || 'Check-in failed', '');
     }
   };
@@ -146,13 +176,25 @@ export default function TestingScreen({navigation}: NavigationProps) {
   };
 
   const scheduleNotification = async (timestamp: number) => {
-    cancelAllNotifications();
+    // cancelAllNotifications(); // Cancel previous ones if any
+
+    const utcDate = new Date(timestamp); // timestamp is in ms, UTC by default
+    console.log('📅 Scheduling notification at UTC:', utcDate.toUTCString());
+
     PushNotification.localNotificationSchedule({
       id: '1',
+      channelId: 'default',
       title: 'Safety Check-In Required!',
       message: 'Tap to confirm your safety',
-      date: new Date(timestamp),
+      date: utcDate, // This date is already in UTC
       allowWhileIdle: true,
+      playSound: true,
+      soundName: 'default',
+      importance: 'high',
+      priority: 'high',
+      data: {
+        type: 'local_checkin',
+      },
     });
   };
 
@@ -216,6 +258,78 @@ export default function TestingScreen({navigation}: NavigationProps) {
               disabled={checkedIn}
               buttonStyle={styles.button}
             />
+            {/* <CustomButton
+              title="Test Notification"
+              onPress={() => {
+                const date = new Date(Date.now() + 60 * 1000); // 1 minute from now
+                console.log(
+                  '⏰ Scheduling test notification at:',
+                  date.toUTCString(),
+                );
+
+                PushNotification.localNotificationSchedule({
+                  id: 'test-123', // unique ID
+                  channelId: 'default', // important for Android
+                  title: '🔔 Scheduled Test Notification',
+                  message:
+                    'This is a test notification scheduled 1 minute later',
+                  date: new Date(Date.now() + 15 * 1000),
+                  allowWhileIdle: true,
+                  playSound: true,
+                  soundName: 'default',
+                  useAlarmManager: true,
+                  importance: 'high',
+                  priority: 'high',
+                });
+
+                // Debug: Check all scheduled notifications
+                PushNotification.getScheduledLocalNotifications(
+                  (notifications: any) => {
+                    console.log('📋 Scheduled Notifications:', notifications);
+
+                    const match = notifications.find(
+                      (n: any) =>
+                        n.id === 'test-123' ||
+                        n.message ===
+                          'This is a test notification scheduled 1 minute later',
+                    );
+
+                    if (match) {
+                      console.log(
+                        '✅ Test notification is scheduled correctly:',
+                        match,
+                      );
+                    } else {
+                      console.warn(
+                        '❌ Test notification NOT found in schedule list.',
+                      );
+                    }
+                  },
+                );
+              }}
+              backgroundColor="#007BFF"
+              textColor="#FFF"
+              borderRadius={12}
+              buttonStyle={styles.button}
+            /> */}
+            {/* <CustomButton
+              title="Send Immediate Notification"
+              onPress={() => {
+                PushNotification.localNotification({
+                  channelId: 'default',
+                  title: '⚡ Immediate Test',
+                  message: 'This is shown right now!',
+                  playSound: true,
+                  soundName: 'default',
+                  importance: 'high',
+                  priority: 'high',
+                });
+              }}
+              backgroundColor="#FFC107"
+              textColor="#000"
+              borderRadius={12}
+              buttonStyle={styles.button}
+            /> */}
           </View>
         </View>
       </View>

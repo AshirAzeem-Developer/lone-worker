@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   View,
   Text,
@@ -21,6 +21,7 @@ import icons from '../../../assets/icons';
 import {screen} from '../../../utils/constants';
 import {loginSuccess} from '../../../store/reducer/authSlice';
 import {useDispatch} from 'react-redux';
+import PushNotification from 'react-native-push-notification';
 
 interface LoginScreenProps {
   navigation: {
@@ -39,9 +40,15 @@ const Login: React.FC<LoginScreenProps> = ({navigation}) => {
 
   const handleLogin = async () => {
     setLoading(true);
+    // PushNotification.localNotification({
+    //   channelId: 'default',
+    //   title: 'Test Notification',
+    //   message: 'Hello from local notification!',
+    // });
     try {
       const push_token = await EncryptedStorage.getItem('push_token');
       const response = await login(pin, password, push_token as string);
+      console.log('Token is', push_token);
       showSuccess('Login successful!', '');
       await EncryptedStorage.setItem('token', response.token);
       // navigation.navigate('Testing');
@@ -56,6 +63,7 @@ const Login: React.FC<LoginScreenProps> = ({navigation}) => {
         showError(error.errors?.password || 'Password is required', '');
       } else {
         showError(error.message || 'Login failed', '');
+        console.log('Login error:', error);
       }
     } finally {
       setLoading(false);
@@ -73,6 +81,26 @@ const Login: React.FC<LoginScreenProps> = ({navigation}) => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const checkToken = async () => {
+      let retries = 0;
+      let token = null;
+      while (!token && retries < 5) {
+        token = await EncryptedStorage.getItem('push_token');
+        if (!token) {
+          await new Promise(res => setTimeout(res, 1000)); // wait 1 sec
+          retries++;
+        }
+      }
+      if (!token) {
+        showError(
+          'Push token not ready. Please wait a moment and try again.',
+          '',
+        );
+      }
+    };
+    checkToken();
+  }, []);
 
   return (
     <>
