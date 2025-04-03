@@ -6,8 +6,15 @@ import {changePassword} from '../../../services/authServices';
 import {useMessage} from '../../../components/MessageProvider/MessageProvider';
 import useStyles from './Style';
 import InputComponent from '../../../components/global/InputComponent';
-import {showError} from '../../../utils/helperFunction';
+import {
+  showError,
+  showSuccess,
+  showWarning,
+} from '../../../utils/helperFunction';
 import icons from '../../../assets/icons';
+import {useDispatch} from 'react-redux';
+import {useAppDispatch} from '../../../store/reducer/hooks';
+import {logout} from '../../../store/reducer/authSlice';
 
 interface ChangePasswordScreenProps {
   navigation: {
@@ -19,6 +26,8 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
   navigation,
 }) => {
   const {styles, sizes} = useStyles();
+  const [loading, setLoading] = useState<boolean>(false);
+  const dispatch = useAppDispatch();
 
   const [newPassword, setNewPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
@@ -39,13 +48,16 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
 
   const handleChangePassword = async () => {
     console.log('button pressed');
+    setLoading(true);
 
     if (!oldPassword || !newPassword || !confirmPassword) {
       showError('Please fill all the fields', '');
+      setLoading(false);
       return;
     }
 
     if (!validatePassword(newPassword)) {
+      setLoading(false);
       setError(
         'Use 8 or more characters with a mix of letters, numbers & symbols.',
       );
@@ -53,7 +65,8 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
     }
 
     if (newPassword !== confirmPassword) {
-      Alert.alert('Error', 'Passwords do not match');
+      setLoading(false);
+      showWarning('Error', 'Passwords do not match');
       return;
     }
 
@@ -65,16 +78,21 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
         oldPassword,
       );
       console.log(response);
-
       // Show success message and navigate back
-      Alert.alert('Success', 'Password changed successfully!');
+      showSuccess(
+        'Password Changed successfully!',
+        'Password changed successfully!',
+      );
+      setLoading(false);
+      dispatch(logout());
       setNewPassword('');
       setConfirmPassword('');
       setOldPassword('');
 
-      navigation.navigate('Auth', {screen: 'Login'}); // Explicitly specify the 'Login' screen
+      navigation.navigate('AuthStack', {screen: 'Login'}); // Explicitly specify the 'Login' screen
     } catch (error: any) {
       console.log(error);
+      setLoading(false);
       showError(error.message || 'Failed to change password', '');
     }
   };
@@ -85,6 +103,7 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
 
       <View style={styles.container}>
         <InputComponent
+          label="Enter Old Password"
           leftIcon={icons.LOCK}
           leftIconStyle={{
             width: sizes.WIDTH * 0.06,
@@ -103,6 +122,7 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
         />
 
         <InputComponent
+          label="Enter New Password"
           leftIcon={icons.LOCK}
           leftIconStyle={{
             width: sizes.WIDTH * 0.06,
@@ -122,6 +142,7 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
         />
 
         <InputComponent
+          label="Confirm New Password"
           leftIcon={icons.LOCK}
           leftIconStyle={{
             width: sizes.WIDTH * 0.06,
@@ -162,6 +183,8 @@ const ChangePasswordScreen: React.FC<ChangePasswordScreenProps> = ({
           elevation: 5,
         }}>
         <CustomButton
+          loading={loading}
+          disabled={loading}
           title="Update"
           onPress={handleChangePassword}
           buttonStyle={styles.btn}

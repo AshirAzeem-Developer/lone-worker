@@ -27,11 +27,13 @@ const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
   const {styles, sizes} = useStyles();
   const {code, email} = route.params;
   const [password, setPassword] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
   const [showPassword, setShowPassword] = useState<boolean>(false);
   const [showNewPassword, setShowNewPassword] = useState<boolean>(false);
 
   const handleResetPassword = async () => {
+    setLoading(true);
     try {
       const response = await api.post('/worker/reset-password', {
         token: code,
@@ -40,8 +42,10 @@ const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
         password_confirmation: passwordConfirmation,
       });
       showSuccess('Success', response.data.message);
+      setLoading(false);
       navigation.navigate('Login'); // Navigate to login screen after reset
     } catch (error: any) {
+      setLoading(false);
       showError(
         'Error',
         error.response?.data?.message || 'Password reset failed',
@@ -92,6 +96,8 @@ const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
         />
         <CustomButton
           title="Reset Password"
+          loading={loading}
+          disabled={!password || !passwordConfirmation || loading}
           buttonStyle={{
             width: sizes.WIDTH * 0.9,
             height: sizes.HEIGHT * 0.07,

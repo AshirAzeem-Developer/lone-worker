@@ -6,24 +6,39 @@ import {
   TouchableOpacity,
   ActivityIndicator,
   Image,
+  ScrollView,
 } from 'react-native';
-import {styles} from './style';
 import CustomHeader from '../../../components/CustomHeader/CustomHeader';
-
 import icons from '../../../assets/icons';
 import {getHistory} from '../../../services/FetchCheckInHistory';
+import useStyles from './style';
 
-export default function CheckInHistory() {
-  const [historyData, setHistoryData] = useState([]); // Store check-in history
-  const [page, setPage] = useState(1); // Current page number
-  const [pagination, setPagination] = useState({}); // Store pagination metadata
-  const [loading, setLoading] = useState(false);
+interface HistoryItem {
+  date: string;
+  scheduled_time: string;
+  actual_time: string;
+  grace_period_end: string;
+  location: string;
+  status: 'completed' | 'pending' | string;
+}
+
+interface PaginationMeta {
+  last_page: number;
+  [key: string]: any; // Allow additional metadata if needed
+}
+
+const CheckInHistory: React.FC = () => {
+  const [historyData, setHistoryData] = useState<HistoryItem[]>([]);
+  const [page, setPage] = useState<number>(1);
+  const [pagination, setPagination] = useState<PaginationMeta>({last_page: 1});
+  const [loading, setLoading] = useState<boolean>(false);
+  const {styles} = useStyles();
 
   useEffect(() => {
     fetchHistory(page);
   }, [page]);
 
-  const fetchHistory = async pageNumber => {
+  const fetchHistory = async (pageNumber: number): Promise<void> => {
     setLoading(true);
     try {
       const response = await getHistory(pageNumber);
@@ -36,19 +51,25 @@ export default function CheckInHistory() {
     }
   };
 
-  //  Function to return an icon based on status
-  const getStatusIcon = status => {
-    if (status === 'completed') {
-      return <Image source={icons.CHECK} width={20} height={20} />;
-    } else if (status === 'pending') {
-      return <Image source={icons.CHECK} width={20} height={20} />;
-    } else {
-      return <Image source={icons.CHECK} width={20} height={20} />;
-    }
+  const getStatusIcon = (status: string) => {
+    let iconSource = icons.OTHERS_ICON;
+    if (status === 'completed') iconSource = icons.COMPLETED_ICON;
+    else if (status === 'pending') iconSource = icons.PENDING_ICON;
+
+    return (
+      <Image
+        source={iconSource}
+        tintColor={status === 'completed' ? '#28A745' : '#FFA500'}
+        style={{
+          width: 20,
+          height: 20,
+        }}
+        resizeMode="contain"
+      />
+    );
   };
 
-  //  Handle Page Change
-  const handlePageChange = newPage => {
+  const handlePageChange = (newPage: number) => {
     if (newPage >= 1 && newPage <= pagination.last_page) {
       setPage(newPage);
     }
@@ -64,39 +85,44 @@ export default function CheckInHistory() {
           <ActivityIndicator size="large" color="#28A745" />
         ) : (
           <>
-            {/* Table Header */}
-            <View style={styles.tableHeader}>
-              <Text style={styles.headerText}>Date</Text>
-              <Text style={styles.headerText}>Scheduled</Text>
-              <Text style={styles.headerText}>Actual</Text>
-              <Text style={styles.headerText}>Grace Period</Text>
-              <Text style={styles.headerText}>Location</Text>
-              <Text style={styles.headerText}>Status</Text>
-            </View>
-
-            {/* Table Rows */}
-            <FlatList
-              data={historyData}
-              keyExtractor={(item, index) => index.toString()}
-              renderItem={({item, index}) => (
-                <View
-                  style={[
-                    styles.tableRow,
-                    {backgroundColor: index % 2 === 0 ? '#FFFFFF' : '#F2F2F2'},
-                  ]}>
-                  <Text style={styles.cell}>{item.date}</Text>
-                  <Text style={styles.cell}>{item.scheduled_time}</Text>
-                  <Text style={styles.cell}>{item.actual_time}</Text>
-                  <Text style={styles.cell}>{item.grace_period_end}</Text>
-                  <Text style={styles.cell}>{item.location}</Text>
-                  <View style={styles.statusCell}>
-                    {getStatusIcon(item.status)}
-                  </View>
+            {/* Horizontal ScrollView for the entire table */}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              <View style={styles.wideTable}>
+                {/* Table Header */}
+                <View style={styles.tableHeader}>
+                  <Text style={styles.headerText}>Date</Text>
+                  <Text style={styles.headerText}>Scheduled</Text>
+                  <Text style={styles.headerText}>Actual</Text>
+                  <Text style={styles.headerText}>Grace Period</Text>
+                  <Text style={styles.headerText}>Location</Text>
+                  <Text style={styles.headerText}>Status</Text>
                 </View>
-              )}
-            />
 
-            {/* Pagination Controls */}
+                {/* Table Rows */}
+                {historyData.map((item, index) => (
+                  <View
+                    key={index}
+                    style={[
+                      styles.tableRow,
+                      {
+                        backgroundColor:
+                          index % 2 === 0 ? '#FFFFFF' : '#F2F2F2',
+                      },
+                    ]}>
+                    <Text style={styles.cell}>{item.date}</Text>
+                    <Text style={styles.cell}>{item.scheduled_time}</Text>
+                    <Text style={styles.cell}>{item.actual_time}</Text>
+                    <Text style={styles.cell}>{item.grace_period_end}</Text>
+                    <Text style={styles.cell}>{item.location}</Text>
+                    <View style={styles.statusCell}>
+                      {getStatusIcon(item.status)}
+                    </View>
+                  </View>
+                ))}
+              </View>
+            </ScrollView>
+
+            {/* Pagination */}
             <View style={styles.paginationContainer}>
               {/* Previous Button */}
               <TouchableOpacity
@@ -104,14 +130,12 @@ export default function CheckInHistory() {
                 onPress={() => handlePageChange(page - 1)}
                 disabled={page === 1}>
                 <Image
-                  source={icons.CHECK}
-                  width={20}
-                  height={20}
+                  source={icons.LEFT_ARROW}
                   style={{
                     width: 20,
                     height: 20,
+                    tintColor: page === 1 ? '#ccc' : '#333',
                   }}
-                  tintColor={page === 1 ? '#ccc' : '#333'}
                 />
               </TouchableOpacity>
 
@@ -143,13 +167,8 @@ export default function CheckInHistory() {
                 onPress={() => handlePageChange(page + 1)}
                 disabled={page === pagination.last_page}>
                 <Image
-                  source={icons.CHECK}
-                  width={20}
-                  height={20}
-                  style={{
-                    width: 20,
-                    height: 20,
-                  }}
+                  source={icons.RIGHT_ARROW}
+                  style={{width: 20, height: 20}}
                 />
               </TouchableOpacity>
             </View>
@@ -158,4 +177,6 @@ export default function CheckInHistory() {
       </View>
     </>
   );
-}
+};
+
+export default CheckInHistory;

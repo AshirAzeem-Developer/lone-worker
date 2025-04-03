@@ -45,7 +45,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   iconColor,
 }) => {
   const isDisabled = disabled || loading;
-  const {styles,colors} = useStyles();
+  const {styles, colors} = useStyles();
 
   return (
     <TouchableOpacity
@@ -60,21 +60,20 @@ const CustomButton: React.FC<CustomButtonProps> = ({
           height,
         },
         buttonStyle,
-      ]}
-    >
+      ]}>
       <View style={styles.innerContainer}>
         {logoName && !loading && (
           <Icon
             name={logoName}
             size={iconSize}
             color={iconColor || textColor}
-            style={{ marginRight: 8 }}
+            style={{marginRight: 8}}
           />
         )}
         {loading ? (
           <ActivityIndicator color={textColor} />
         ) : (
-          <Text style={[styles.text, { color: textColor }, textStyle]}>
+          <Text style={[styles.text, {color: textColor}, textStyle]}>
             {title}
           </Text>
         )}

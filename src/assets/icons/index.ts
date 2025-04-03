@@ -14,4 +14,9 @@ export default {
   NOTIFICATION: require('./notification-bell.png'),
   ACCOUNT_DETAILS: require('./user-management.png'),
   LOGOUT: require('./logout.png'),
+  LEFT_ARROW: require('./left.png'),
+  RIGHT_ARROW: require('./right.png'),
+  PENDING_ICON: require('./wall-clock.png'),
+  COMPLETED_ICON: require('./checked.png'),
+  OTHERS_ICON: require('./cloud.png'),
 };

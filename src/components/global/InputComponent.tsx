@@ -139,6 +139,7 @@ const useStyles = () => {
         wrapper: {
           width: '100%',
           marginBottom: 10, // Space for error text
+          marginTop: sizes.HEIGHT * 0.018,
         },
         container: {
           width: '100%',
