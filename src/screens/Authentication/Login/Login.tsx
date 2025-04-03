@@ -118,7 +118,7 @@ const Login: React.FC<LoginScreenProps> = ({navigation}) => {
             }}>
             <View
               style={{
-                height: screen.height * 0.25,
+                height: screen.height * 0.2,
                 width: screen.width * 0.9,
                 justifyContent: 'center',
                 alignContent: 'center',

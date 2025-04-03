@@ -17,7 +17,7 @@ const useStyles = () => {
       height: sizes.HEIGHT * 0.35,
       paddingBottom: sizes.HEIGHT * 0.1,
       marginBottom: sizes.HEIGHT * 0.1,
-      marginTop: sizes.HEIGHT * 0.06,
+      marginTop: sizes.HEIGHT * 0.05,
     },
     loginText: {
       ...globalStyles.TEXT_STYLE_BOLD,
