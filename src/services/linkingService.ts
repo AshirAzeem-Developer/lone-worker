@@ -1,5 +1,6 @@
 // linkingService.ts - Manages deep linking events and navigation
 import {Linking} from 'react-native';
+import 'react-native-url-polyfill/auto';
 import {
   NavigationContainerRef,
   NavigationContainerRefContext,

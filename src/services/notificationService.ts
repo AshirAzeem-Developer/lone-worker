@@ -82,7 +82,7 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import {LinkingOptions} from '@react-navigation/native';
 import {showError} from '../utils/helperFunction';
 import PushNotification from 'react-native-push-notification';
-const NAVIGATION_IDS = ['home', 'post', 'settings'];
+const NAVIGATION_IDS = ['home', 'reset-password'];
 
 function buildDeepLinkFromNotificationData(data: any): string | null {
   const navigationId = data?.navigationId;
@@ -104,13 +104,18 @@ function buildDeepLinkFromNotificationData(data: any): string | null {
 }
 
 export const linkingConfig: LinkingOptions<any> = {
-  prefixes: ['myapp://'],
+  prefixes: ['myapp://', 'https://loneworker.etgraphics.net'],
   config: {
     initialRouteName: 'Home',
     screens: {
-      Home: 'home',
-      Post: 'post/:id',
-      Settings: 'settings',
+      Home: 'Home',
+      ResetPassword: {
+        path: 'reset-password',
+        parse: {
+          code: (code: string) => `${code}`,
+          email: (email: string) => `${email}`,
+        },
+      },
     },
   },
   async getInitialURL() {

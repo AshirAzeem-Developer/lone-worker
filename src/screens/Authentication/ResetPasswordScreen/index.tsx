@@ -6,6 +6,7 @@ import api from '../../../services/api';
 import InputComponent from '../../../components/global/InputComponent';
 import icons from '../../../assets/icons';
 import useStyles from '../Login/Style';
+import {showError, showSuccess} from '../../../utils/helperFunction';
 
 interface ResetPasswordScreenProps {
   route: {
@@ -38,10 +39,10 @@ const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
         password: password,
         password_confirmation: passwordConfirmation,
       });
-      Alert.alert('Success', response.data.message);
+      showSuccess('Success', response.data.message);
       navigation.navigate('Login'); // Navigate to login screen after reset
     } catch (error: any) {
-      Alert.alert(
+      showError(
         'Error',
         error.response?.data?.message || 'Password reset failed',
       );
@@ -89,7 +90,17 @@ const ResetPasswordScreen: React.FC<ResetPasswordScreenProps> = ({
           onRightIconPress={() => setShowNewPassword(!showNewPassword)}
           secureTextEntry={showNewPassword ? false : true}
         />
-        <CustomButton title="Reset Password" onPress={handleResetPassword} />
+        <CustomButton
+          title="Reset Password"
+          buttonStyle={{
+            width: sizes.WIDTH * 0.9,
+            height: sizes.HEIGHT * 0.07,
+            marginTop: sizes.HEIGHT * 0.02,
+            backgroundColor: '#4CAF50',
+            borderRadius: sizes.WIDTH * 0.02,
+          }}
+          onPress={handleResetPassword}
+        />
       </View>
     </>
   );

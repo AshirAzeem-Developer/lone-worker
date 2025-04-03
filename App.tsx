@@ -1,4 +1,5 @@
 import React, {useEffect, useRef, useState} from 'react';
+import 'react-native-url-polyfill/auto';
 import {
   NavigationContainer,
   NavigationContainerRef,
@@ -17,10 +18,12 @@ import {
   listenForForegroundNotifications,
 } from './src/services/notificationService';
 import PushNotification from 'react-native-push-notification';
+import {initDeepLinking} from './src/services/linkingService';
 
 const App = () => {
   const [show, setShow] = useState(true);
-  const navigationRef = useRef<NavigationContainerRef<any>>(null);
+  const navigationRef = useRef<NavigationContainerRef<any> | null>(null);
+
   PushNotification.createChannel(
     {
       channelId: 'default', // must match the one used below
@@ -35,6 +38,11 @@ const App = () => {
   useEffect(() => {
     configureFirebaseNotifications();
     listenForForegroundNotifications();
+    const cleanup = initDeepLinking(navigationRef as any);
+
+    return () => {
+      cleanup();
+    };
   }, []);
 
   return (
