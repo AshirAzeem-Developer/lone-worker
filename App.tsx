@@ -19,6 +19,7 @@ import {
 } from './src/services/notificationService';
 import PushNotification from 'react-native-push-notification';
 import {initDeepLinking} from './src/services/linkingService';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const App = () => {
   const [show, setShow] = useState(true);

@@ -26,16 +26,17 @@ export const initializeLocalNotifications = (
         switch (type) {
           case 'local_checkin':
             navigation.navigate('Home');
+            onTap(); // optional callback`
             break;
           case 'missed_checkin':
             navigation.navigate('EscalationScreen');
             break;
-
           default:
             navigation.navigate('Shift Details');
+            break;
         }
 
-        onTap(); // optional callback
+        // onTap(); // optional callback
       }
     },
 

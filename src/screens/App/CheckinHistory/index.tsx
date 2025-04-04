@@ -7,6 +7,7 @@ import {
   ActivityIndicator,
   Image,
   ScrollView,
+  RefreshControl,
 } from 'react-native';
 import CustomHeader from '../../../components/CustomHeader/CustomHeader';
 import icons from '../../../assets/icons';
@@ -33,6 +34,7 @@ const CheckInHistory: React.FC = () => {
   const [pagination, setPagination] = useState<PaginationMeta>({last_page: 1});
   const [loading, setLoading] = useState<boolean>(false);
   const {styles} = useStyles();
+  const [refreshing, setRefreshing] = useState<boolean>(false);
 
   useEffect(() => {
     fetchHistory(page);
@@ -74,6 +76,19 @@ const CheckInHistory: React.FC = () => {
       setPage(newPage);
     }
   };
+  const onRefresh = async () => {
+    setRefreshing(true);
+    try {
+      const response = await getHistory(1); // Always refresh from page 1
+      setHistoryData(response.data);
+      setPagination(response.pagination);
+      setPage(1);
+    } catch (error) {
+      console.error('Error refreshing history:', error);
+    } finally {
+      setRefreshing(false);
+    }
+  };
 
   return (
     <>
@@ -86,7 +101,12 @@ const CheckInHistory: React.FC = () => {
         ) : (
           <>
             {/* Horizontal ScrollView for the entire table */}
-            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+            <ScrollView
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              refreshControl={
+                <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+              }>
               <View style={styles.wideTable}>
                 {/* Table Header */}
                 <View style={styles.tableHeader}>

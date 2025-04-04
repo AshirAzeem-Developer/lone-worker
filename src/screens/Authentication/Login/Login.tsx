@@ -50,6 +50,7 @@ const Login: React.FC<LoginScreenProps> = ({navigation}) => {
       const response = await login(pin, password, push_token as string);
       console.log('Token is', push_token);
       showSuccess('Login successful!', '');
+      console.log('Login response:', response);
       await EncryptedStorage.setItem('token', response.token);
       // navigation.navigate('Testing');
       dispatch(loginSuccess());
