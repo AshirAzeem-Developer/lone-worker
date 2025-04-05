@@ -1,7 +1,7 @@
-import { Platform, StyleSheet } from 'react-native';
-import { Colors } from './color';
-import { Sizes } from './size';
-import { useMemo } from 'react';
+import {Platform, StyleSheet} from 'react-native';
+import {Colors} from './color';
+import {Sizes} from './size';
+import {useMemo} from 'react';
 
 export const getGlobalStyles = (colors: Colors, sizes: Sizes) => {
   return useMemo(

@@ -17,6 +17,7 @@ const useStyles = () => {
       paddingVertical: sizes.HEIGHT * 0.02,
     },
     heading: {
+      ...globalStyles.TEXT_STYLE,
       alignSelf: 'center',
       fontSize: sizes.WIDTH * 0.05,
       fontWeight: '900',
@@ -37,6 +38,7 @@ const useStyles = () => {
       paddingHorizontal: sizes.WIDTH * 0.02,
     },
     headerText: {
+      ...globalStyles.TEXT_STYLE_BOLD,
       width: CELL_WIDTH,
       fontSize: sizes.WIDTH * 0.032,
       color: '#FFFFFF',
@@ -57,6 +59,7 @@ const useStyles = () => {
     },
 
     cell: {
+      ...globalStyles.TEXT_STYLE,
       width: CELL_WIDTH,
       fontSize: sizes.WIDTH * 0.03,
       color: '#000000',
@@ -85,6 +88,7 @@ const useStyles = () => {
       backgroundColor: 'green',
     },
     pageText: {
+      ...globalStyles.TEXT_STYLE,
       fontSize: 16,
       fontWeight: 'bold',
     },

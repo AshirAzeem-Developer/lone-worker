@@ -13,6 +13,8 @@ import CustomHeader from '../../../components/CustomHeader/CustomHeader';
 import icons from '../../../assets/icons';
 import {getHistory} from '../../../services/FetchCheckInHistory';
 import useStyles from './style';
+import images from '../../../assets/images';
+import LottieView from 'lottie-react-native';
 
 interface HistoryItem {
   date: string;
@@ -33,7 +35,7 @@ const CheckInHistory: React.FC = () => {
   const [page, setPage] = useState<number>(1);
   const [pagination, setPagination] = useState<PaginationMeta>({last_page: 1});
   const [loading, setLoading] = useState<boolean>(false);
-  const {styles} = useStyles();
+  const {styles, sizes, colors} = useStyles();
   const [refreshing, setRefreshing] = useState<boolean>(false);
 
   useEffect(() => {
@@ -95,7 +97,35 @@ const CheckInHistory: React.FC = () => {
       <CustomHeader showMenu />
       <View style={styles.container}>
         <Text style={styles.heading}>Check-In History</Text>
-
+        <View
+          style={{
+            width: sizes.WIDTH * 0.95,
+            flexDirection: 'row',
+            justifyContent: 'flex-end',
+            alignItems: 'center',
+            marginBottom: -sizes.HEIGHT * 0.02,
+          }}>
+          <Text
+            style={{
+              fontStyle: 'italic',
+              marginBottom: sizes.HEIGHT * 0.005,
+              width: sizes.WIDTH * 0.22,
+              fontSize: sizes.WIDTH * 0.028,
+              fontWeight: 'bold',
+            }}>
+            Slide to see more
+          </Text>
+          <LottieView
+            source={require('../../../assets/lottie/slideArrow.json')}
+            style={{
+              width: sizes.WIDTH * 0.165,
+              height: sizes.WIDTH * 0.165,
+              // backgroundColor: 'red',
+            }}
+            autoPlay
+            loop
+          />
+        </View>
         {loading ? (
           <ActivityIndicator size="large" color="#28A745" />
         ) : (
@@ -126,7 +156,7 @@ const CheckInHistory: React.FC = () => {
                       styles.tableRow,
                       {
                         backgroundColor:
-                          index % 2 === 0 ? '#FFFFFF' : '#F2F2F2',
+                          index % 2 === 0 ? '#FFFFFF' : '#D9EAFD',
                       },
                     ]}>
                     <Text style={styles.cell}>{item.date}</Text>

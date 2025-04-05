@@ -4,4 +4,5 @@ export default {
   ICON_PNG: require('./icon.png'),
   LOGO: require('./logo.png'),
   SPLASH_LOGO: require('./splash.png'),
+  SLIDE_RIGHT_ARROW: require('./SlideRight.gif'),
 };
