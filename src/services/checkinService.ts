@@ -4,6 +4,7 @@ export interface AttendanceResponse {
   message: string;
   worker_check_in_id: number;
   grace_period_end: string;
+  check_in_frequency: number;
 }
 
 export const attendance = async (

@@ -81,13 +81,19 @@ export default function TestingScreen({navigation}: NavigationProps) {
 
   const handleCheckin = async () => {
     const checkinTime = new Date();
+
     try {
+      let frequency;
+
       if (!shiftStart) {
         const response = await attendance(checkinTime.toISOString());
 
         console.log('this is the checkIn response : ', response);
 
         setShiftStart(true);
+        frequency = response.check_in_frequency;
+        // setTimeRemaining(response.check_in_frequency);
+        // console.log(response.check_in_frequency);
         await AsyncStorage.setItem(
           'checkInID',
           response.worker_check_in_id?.toString() || '',
@@ -119,12 +125,16 @@ export default function TestingScreen({navigation}: NavigationProps) {
       setCheckedIn(true);
       setSafetyTextShow(false);
 
-      const frequency = 120; // seconds
-      const newEndTime = checkinTime.getTime() + frequency * 1000;
-      setEndTime(newEndTime);
-      console.log('New End Time: ', newEndTime);
-      setTimeRemaining(frequency);
-      await scheduleNotification(newEndTime);
+      if (frequency !== undefined) {
+        const newEndTime = checkinTime.getTime() + frequency * 1000;
+        setEndTime(newEndTime);
+        console.log('New End Time: ', newEndTime);
+        const remainingSeconds = Math.floor((newEndTime - Date.now()) / 1000);
+        setTimeRemaining(remainingSeconds);
+        await scheduleNotification(newEndTime);
+      } else {
+        console.warn('Frequency is undefined, skipping end time setup.');
+      }
     } catch (error: any) {
       console.log('Check-in Error from Catch Block:', error);
       showError(error?.message || 'Check-in failed', '');
