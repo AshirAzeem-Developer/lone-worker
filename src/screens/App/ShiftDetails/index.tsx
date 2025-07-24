@@ -25,7 +25,14 @@ export default function ShiftDetails() {
         id: Math.random(),
         customer_name: item.customer_name || '',
         site_name: item.site_name || '',
-        days: item.days ? JSON.parse(item.days) : [],
+        days: Array.isArray(item.days)
+  ? item.days
+  : typeof item.days === 'string' && item.days.includes(',')
+  ? item.days.split(',').map((day:any) => day.trim())
+  : typeof item.days === 'string'
+  ? [item.days]
+  : [],
+
         start_time: item.start_time || '',
         end_time: item.end_time || '',
       }));

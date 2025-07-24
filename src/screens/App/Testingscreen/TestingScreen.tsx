@@ -78,88 +78,109 @@ export default function TestingScreen({navigation}: NavigationProps) {
     initializeLocalNotifications(initiateSafetyCheck, navigation);
     requestAndroidPermission();
   }, []);
+const formatDateTime = (date: Date) => {
+  const pad = (n: number) => n.toString().padStart(2, '0');
+
+  return (
+    date.getFullYear() +
+    '-' +
+    pad(date.getMonth() + 1) +
+    '-' +
+    pad(date.getDate()) +
+    ' ' +
+    pad(date.getHours()) +
+    ':' +
+    pad(date.getMinutes()) +
+    ':' +
+    pad(date.getSeconds())
+  );
+};
 
   const handleCheckin = async () => {
-    const checkinTime = new Date();
+  const checkinTime = new Date();
+  const formattedCheckinTime = formatDateTime(checkinTime); // Y-m-d H:i:s
 
-    try {
-      let frequency;
+  try {
+    let frequency;
 
-      if (!shiftStart) {
-        const response = await attendance(checkinTime.toISOString());
+    if (!shiftStart) {
+      const response = await attendance(formattedCheckinTime);
 
-        console.log('this is the checkIn response : ', response);
+      console.log('this is the checkIn response : ', response);
 
-        setShiftStart(true);
-        frequency = response.check_in_frequency;
-        // setTimeRemaining(response.check_in_frequency);
-        // console.log(response.check_in_frequency);
-        await AsyncStorage.setItem(
-          'checkInID',
-          response.worker_check_in_id?.toString() || '',
-        );
-        await AsyncStorage.setItem(
-          'gracePeriodEnd',
-          response.grace_period_end.toString(),
-        );
-      } else {
-        const worker_check_in_id = await AsyncStorage.getItem('checkInID');
-        if (!worker_check_in_id) throw new Error('No check-in ID found');
-        const response = await checkIn(
-          Number(worker_check_in_id),
-          checkinTime.toISOString(),
-        );
+      setShiftStart(true);
+      frequency = response.check_in_frequency;
 
-        console.log("'this is the checkIn response from else block:", response);
-        await AsyncStorage.setItem(
-          'checkInID',
-          response.worker_check_in_id.toString(),
-        );
-        await AsyncStorage.setItem(
-          'gracePeriodEnd',
-          response.grace_period_end.toString(),
-        );
-      }
-
-      showSuccess('Checked in successfully', '');
-      setCheckedIn(true);
-      setSafetyTextShow(false);
-
-      if (frequency !== undefined) {
-        const newEndTime = checkinTime.getTime() + frequency * 1000;
-        setEndTime(newEndTime);
-        console.log('New End Time: ', newEndTime);
-        const remainingSeconds = Math.floor((newEndTime - Date.now()) / 1000);
-        setTimeRemaining(remainingSeconds);
-        await scheduleNotification(newEndTime);
-      } else {
-        console.warn('Frequency is undefined, skipping end time setup.');
-      }
-    } catch (error: any) {
-      console.log('Check-in Error from Catch Block:', error);
-      showError(error?.message || 'Check-in failed', '');
-    }
-  };
-
-  const handleCheckOut = async () => {
-    try {
+      await AsyncStorage.setItem(
+        'checkInID',
+        response.worker_check_in_id?.toString() || '',
+      );
+      await AsyncStorage.setItem(
+        'gracePeriodEnd',
+        response.grace_period_end.toString(),
+      );
+    } else {
       const worker_check_in_id = await AsyncStorage.getItem('checkInID');
       if (!worker_check_in_id) throw new Error('No check-in ID found');
+      const response = await checkIn(
+        Number(worker_check_in_id),
+        formattedCheckinTime,
+      );
 
-      await checkOut(Number(worker_check_in_id), new Date().toISOString());
-      showSuccess('Checked out successfully!', '');
-    } catch (error: any) {
-      console.log(error);
-      showError(error?.message || 'Check-out failed', '');
-    } finally {
-      setShiftStart(false);
-      setCheckedIn(false);
-      setTimeRemaining(0);
-      setEndTime(null);
-      cancelAllNotifications();
-      await AsyncStorage.multiRemove(['checkInID', 'gracePeriodEnd']);
+      console.log("'this is the checkIn response from else block:", response);
+      await AsyncStorage.setItem(
+        'checkInID',
+        response.worker_check_in_id.toString(),
+      );
+      await AsyncStorage.setItem(
+        'gracePeriodEnd',
+        response.grace_period_end.toString(),
+      );
     }
-  };
+
+    showSuccess('Checked in successfully', '');
+    setCheckedIn(true);
+    setSafetyTextShow(false);
+
+    if (frequency !== undefined) {
+      const newEndTime = checkinTime.getTime() + frequency * 1000;
+      setEndTime(newEndTime);
+      console.log('New End Time: ', newEndTime);
+      const remainingSeconds = Math.floor((newEndTime - Date.now()) / 1000);
+      setTimeRemaining(remainingSeconds);
+      await scheduleNotification(newEndTime);
+    } else {
+      console.warn('Frequency is undefined, skipping end time setup.');
+    }
+  } catch (error: any) {
+    console.log('Check-in Error from Catch Block:', error);
+    showError(error?.message || 'Check-in failed', '');
+  }
+};
+
+
+  const handleCheckOut = async () => {
+  try {
+    const worker_check_in_id = await AsyncStorage.getItem('checkInID');
+    if (!worker_check_in_id) throw new Error('No check-in ID found');
+
+    const checkoutTime = formatDateTime(new Date()); // Y-m-d H:i:s
+    await checkOut(Number(worker_check_in_id), checkoutTime);
+
+    showSuccess('Checked out successfully!', '');
+  } catch (error: any) {
+    console.log(error);
+    showError(error?.message || 'Check-out failed', '');
+  } finally {
+    setShiftStart(false);
+    setCheckedIn(false);
+    setTimeRemaining(0);
+    setEndTime(null);
+    cancelAllNotifications();
+    await AsyncStorage.multiRemove(['checkInID', 'gracePeriodEnd']);
+  }
+};
+
 
   const initiateSafetyCheck = async () => {
     try {
