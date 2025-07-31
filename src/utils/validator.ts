@@ -14,5 +14,5 @@ export const validatePhoneNo = (phoneNo: string) => {
 };
 
 export const validatePin = (pin: string) => {
-  return pin.length === 6;
+  return pin.length >= 6 && pin.length <= 10;
 };

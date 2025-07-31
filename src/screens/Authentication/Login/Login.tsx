@@ -135,11 +135,11 @@ const Login: React.FC<LoginScreenProps> = ({navigation}) => {
                 value={pin}
                 placeholder="Enter Pin"
                 keyboardType="numeric"
-                maxLength={6}
+                maxLength={10}
                 errorHandler={[
                   {
                     validator: validatePin,
-                    errorText: 'Pin must be 6 digits',
+                    errorText: 'Pin must be 6 to 10 digits',
                   },
                 ]}
               />

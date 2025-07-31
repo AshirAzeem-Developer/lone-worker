@@ -5,6 +5,7 @@ import {
   Dimensions,
   Platform,
   PermissionsAndroid,
+  ActivityIndicator, // Import ActivityIndicator
 } from 'react-native';
 import PushNotification from 'react-native-push-notification';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -24,13 +25,15 @@ interface NavigationProps {
 export default function TestingScreen({navigation}: NavigationProps) {
   const {styles} = useStyles();
 
-  const [loading, setLoading] = useState<boolean>(false);
+  // Removed 'loading' as it was redundant with isCheckingIn/isEndingShift
   const [checkedIn, setCheckedIn] = useState<boolean>(false);
   const [shiftStart, setShiftStart] = useState<boolean>(false);
   const [notificationId, setNotificationId] = useState<string | null>(null);
   const [safetyTextShow, setSafetyTextShow] = useState<boolean>(false);
   const [timeRemaining, setTimeRemaining] = useState<number>(0);
   const [endTime, setEndTime] = useState<number | null>(null);
+  const [isCheckingIn, setIsCheckingIn] = useState<boolean>(false); // State for Check in loading
+  const [isEndingShift, setIsEndingShift] = useState<boolean>(false); // State for End shift loading
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -78,109 +81,113 @@ export default function TestingScreen({navigation}: NavigationProps) {
     initializeLocalNotifications(initiateSafetyCheck, navigation);
     requestAndroidPermission();
   }, []);
-const formatDateTime = (date: Date) => {
-  const pad = (n: number) => n.toString().padStart(2, '0');
 
-  return (
-    date.getFullYear() +
-    '-' +
-    pad(date.getMonth() + 1) +
-    '-' +
-    pad(date.getDate()) +
-    ' ' +
-    pad(date.getHours()) +
-    ':' +
-    pad(date.getMinutes()) +
-    ':' +
-    pad(date.getSeconds())
-  );
-};
+  const formatDateTime = (date: Date) => {
+    const pad = (n: number) => n.toString().padStart(2, '0');
+
+    return (
+      date.getFullYear() +
+      '-' +
+      pad(date.getMonth() + 1) +
+      '-' +
+      pad(date.getDate()) +
+      ' ' +
+      pad(date.getHours()) +
+      ':' +
+      pad(date.getMinutes()) +
+      ':' +
+      pad(date.getSeconds())
+    );
+  };
 
   const handleCheckin = async () => {
-  const checkinTime = new Date();
-  const formattedCheckinTime = formatDateTime(checkinTime); // Y-m-d H:i:s
+    setIsCheckingIn(true); // Set loading to true
+    const checkinTime = new Date();
+    const formattedCheckinTime = formatDateTime(checkinTime); // Y-m-d H:i:s
 
-  try {
-    let frequency;
+    try {
+      let frequency;
 
-    if (!shiftStart) {
-      const response = await attendance(formattedCheckinTime);
+      if (!shiftStart) {
+        const response = await attendance(formattedCheckinTime);
 
-      console.log('this is the checkIn response : ', response);
+        console.log('this is the checkIn response : ', response);
 
-      setShiftStart(true);
-      frequency = response.check_in_frequency;
+        setShiftStart(true);
+        frequency = response.check_in_frequency;
 
-      await AsyncStorage.setItem(
-        'checkInID',
-        response.worker_check_in_id?.toString() || '',
-      );
-      await AsyncStorage.setItem(
-        'gracePeriodEnd',
-        response.grace_period_end.toString(),
-      );
-    } else {
-      const worker_check_in_id = await AsyncStorage.getItem('checkInID');
-      if (!worker_check_in_id) throw new Error('No check-in ID found');
-      const response = await checkIn(
-        Number(worker_check_in_id),
-        formattedCheckinTime,
-      );
+        await AsyncStorage.setItem(
+          'checkInID',
+          response.worker_check_in_id?.toString() || '',
+        );
+        await AsyncStorage.setItem(
+          'gracePeriodEnd',
+          response.grace_period_end.toString(),
+        );
+      } else {
+        const worker_check_in_id = await AsyncStorage.getItem('checkInID');
+        if (!worker_check_in_id) throw new Error('No check-in ID found');
+        const response = await checkIn(
+          Number(worker_check_in_id),
+          formattedCheckinTime,
+        );
 
-      console.log("'this is the checkIn response from else block:", response);
-      await AsyncStorage.setItem(
-        'checkInID',
-        response.worker_check_in_id.toString(),
-      );
-      await AsyncStorage.setItem(
-        'gracePeriodEnd',
-        response.grace_period_end.toString(),
-      );
+        console.log("'this is the checkIn response from else block:", response);
+        await AsyncStorage.setItem(
+          'checkInID',
+          response.worker_check_in_id.toString(),
+        );
+        await AsyncStorage.setItem(
+          'gracePeriodEnd',
+          response.grace_period_end.toString(),
+        );
+      }
+
+      showSuccess('Checked in successfully', '');
+      setCheckedIn(true);
+      setSafetyTextShow(false);
+
+      if (frequency !== undefined) {
+        const newEndTime = checkinTime.getTime() + frequency * 1000;
+        setEndTime(newEndTime);
+        console.log('New End Time: ', newEndTime);
+        const remainingSeconds = Math.floor((newEndTime - Date.now()) / 1000);
+        setTimeRemaining(remainingSeconds);
+        await scheduleNotification(newEndTime);
+      } else {
+        console.warn('Frequency is undefined, skipping end time setup.');
+      }
+    } catch (error: any) {
+      console.log('Check-in Error from Catch Block:', error);
+      showError(error?.message || 'Check-in failed', '');
+    } finally {
+      setIsCheckingIn(false); // Reset loading
     }
-
-    showSuccess('Checked in successfully', '');
-    setCheckedIn(true);
-    setSafetyTextShow(false);
-
-    if (frequency !== undefined) {
-      const newEndTime = checkinTime.getTime() + frequency * 1000;
-      setEndTime(newEndTime);
-      console.log('New End Time: ', newEndTime);
-      const remainingSeconds = Math.floor((newEndTime - Date.now()) / 1000);
-      setTimeRemaining(remainingSeconds);
-      await scheduleNotification(newEndTime);
-    } else {
-      console.warn('Frequency is undefined, skipping end time setup.');
-    }
-  } catch (error: any) {
-    console.log('Check-in Error from Catch Block:', error);
-    showError(error?.message || 'Check-in failed', '');
-  }
-};
-
+  };
 
   const handleCheckOut = async () => {
-  try {
-    const worker_check_in_id = await AsyncStorage.getItem('checkInID');
-    if (!worker_check_in_id) throw new Error('No check-in ID found');
+    setIsEndingShift(true); // Set loading to true
+    try {
+      const worker_check_in_id = await AsyncStorage.getItem('checkInID');
+      if (!worker_check_in_id) throw new Error('No check-in ID found');
 
-    const checkoutTime = formatDateTime(new Date()); // Y-m-d H:i:s
-    await checkOut(Number(worker_check_in_id), checkoutTime);
+      const checkoutTime = formatDateTime(new Date()); // Y-m-d H:i:s
+      await checkOut(Number(worker_check_in_id), checkoutTime);
 
-    showSuccess('Checked out successfully!', '');
-  } catch (error: any) {
-    console.log(error);
-    showError(error?.message || 'Check-out failed', '');
-  } finally {
-    setShiftStart(false);
-    setCheckedIn(false);
-    setTimeRemaining(0);
-    setEndTime(null);
-    cancelAllNotifications();
-    await AsyncStorage.multiRemove(['checkInID', 'gracePeriodEnd']);
-  }
-};
-
+      showSuccess('Checked out successfully!', '');
+    } catch (error: any) {
+      console.log(error);
+      showError(error?.message || 'Check-out failed', '');
+    } finally {
+      setIsEndingShift(false); // Reset loading
+      setShiftStart(false);
+      setCheckedIn(false);
+      setTimeRemaining(0);
+      setEndTime(null);
+      cancelAllNotifications();
+      await AsyncStorage.multiRemove(['checkInID', 'gracePeriodEnd']);
+    }
+  };
 
   const initiateSafetyCheck = async () => {
     try {
@@ -261,22 +268,22 @@ const formatDateTime = (date: Date) => {
             <CustomButton
               title="Check in"
               onPress={handleCheckin}
-              loading={loading}
+              loading={isCheckingIn} // Pass isCheckingIn to the loading prop
               backgroundColor="#28A745"
               textColor="#FFF"
               borderRadius={12}
-              disabled={checkedIn}
+              disabled={checkedIn || isEndingShift} // Disable if already checked in or ending shift
               buttonStyle={styles.button}
             />
 
             <CustomButton
               title="End shift"
               onPress={handleCheckOut}
-              loading={loading}
+              loading={isEndingShift} // Pass isEndingShift to the loading prop
               backgroundColor="#6C757D"
               textColor="#FFF"
               borderRadius={12}
-              disabled={!shiftStart}
+              disabled={!shiftStart || isCheckingIn} // Disable if shift hasn't started or checking in
               buttonStyle={styles.button}
             />
 
@@ -286,81 +293,9 @@ const formatDateTime = (date: Date) => {
               backgroundColor="#DC3545"
               textColor="#FFF"
               borderRadius={12}
-              disabled={checkedIn}
+              disabled={checkedIn || isCheckingIn || isEndingShift} // Disable if checked in or any operation is loading
               buttonStyle={styles.button}
             />
-            {/* <CustomButton
-              title="Test Notification"
-              onPress={() => {
-                const date = new Date(Date.now() + 60 * 1000); // 1 minute from now
-                console.log(
-                  '⏰ Scheduling test notification at:',
-                  date.toUTCString(),
-                );
-
-                PushNotification.localNotificationSchedule({
-                  id: 'test-123', // unique ID
-                  channelId: 'default', // important for Android
-                  title: '🔔 Scheduled Test Notification',
-                  message:
-                    'This is a test notification scheduled 1 minute later',
-                  date: new Date(Date.now() + 15 * 1000),
-                  allowWhileIdle: true,
-                  playSound: true,
-                  soundName: 'default',
-                  useAlarmManager: true,
-                  importance: 'high',
-                  priority: 'high',
-                });
-
-                // Debug: Check all scheduled notifications
-                PushNotification.getScheduledLocalNotifications(
-                  (notifications: any) => {
-                    console.log('📋 Scheduled Notifications:', notifications);
-
-                    const match = notifications.find(
-                      (n: any) =>
-                        n.id === 'test-123' ||
-                        n.message ===
-                          'This is a test notification scheduled 1 minute later',
-                    );
-
-                    if (match) {
-                      console.log(
-                        '✅ Test notification is scheduled correctly:',
-                        match,
-                      );
-                    } else {
-                      console.warn(
-                        '❌ Test notification NOT found in schedule list.',
-                      );
-                    }
-                  },
-                );
-              }}
-              backgroundColor="#007BFF"
-              textColor="#FFF"
-              borderRadius={12}
-              buttonStyle={styles.button}
-            /> */}
-            {/* <CustomButton
-              title="Send Immediate Notification"
-              onPress={() => {
-                PushNotification.localNotification({
-                  channelId: 'default',
-                  title: '⚡ Immediate Test',
-                  message: 'This is shown right now!',
-                  playSound: true,
-                  soundName: 'default',
-                  importance: 'high',
-                  priority: 'high',
-                });
-              }}
-              backgroundColor="#FFC107"
-              textColor="#000"
-              borderRadius={12}
-              buttonStyle={styles.button}
-            /> */}
           </View>
         </View>
       </View>
